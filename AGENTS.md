@@ -52,9 +52,23 @@ A `docker-compose.yml` is provided for local development/testing with WordPress 
 
 | Page | Slug | Purpose |
 |------|------|---------|
-| DJ UrbanT | `/` (static homepage) | Hero + stats + booking CTA |
-| Contact | `/contact/` | Booking form + WhatsApp button |
+| DJ UrbanT | `/` (static homepage) | Hero + YouTube embed + stats strip + booking CTA |
+| Video | `/video/` | Full YouTube video archive (5 embeds + "More on YouTube" CTA) |
+| Audio | `/audio/` | Mixcloud audio archive (6 embeds + "More on Mixcloud" CTA) |
+| Contact | `/contact/` | Booking info + WhatsApp button + reply SLA |
 | Privacy Policy | (draft) | Standard WP privacy policy |
+
+### Content Sources
+
+The YouTube/Mixcloud content was sourced from `https://djurbant.com/media-data.json` which is auto-generated from the YouTube and Mixcloud APIs. When new sets are published, pages should be updated in wp-admin with fresh embed URLs.
+
+### Additional CSS (Customizer)
+
+The dark theme polish is stored in **Appearance → Customize → Additional CSS** and includes:
+- Black backgrounds for body, header, content, footer
+- Hidden default page title bars (`entry-hero-container-inner`, `h1.entry-title`)
+- Rainbow gradient CTA button (`.djurbant-cta-rainbow`)
+- Semi-transparent header (`rgba(3,5,9,0.95)`)
 
 ### Build Phases (for reference)
 
@@ -62,6 +76,6 @@ The site is being built to clone https://djurbant.com/ as a Gutenberg-managed Wo
 
 - **Phase 1** (done): Foundation — Kadence theme, dark global styles, plugins
 - **Phase 2** (done): Pages — Homepage scaffold, Contact page with WhatsApp
-- **Phase 3** (pending): Dynamic content — YouTube/Mixcloud embeds, carousel
-- **Phase 4** (pending): Polish — Custom CSS gradients, animations, responsive tweaks
-- **Phase 5** (pending): Go live — Push staging → live, domain setup
+- **Phase 3** (done): Dynamic content — YouTube/Mixcloud embeds on Video, Audio, and Homepage
+- **Phase 4** (done): Polish — Rainbow gradient CTA, hidden page titles, dark header CSS
+- **Phase 5** (pending): Go live — Push staging → live, domain setup, WPForms booking form creation
