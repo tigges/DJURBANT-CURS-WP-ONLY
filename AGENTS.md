@@ -4,51 +4,64 @@
 
 ### Overview
 
-This is a WordPress-only development project ("DJURBANT CURS WP ONLY") running via Docker Compose. The stack consists of:
+This is a WordPress project ("DJ UrbanT") hosted on **Cloudways**. The primary development workflow is **no-code via the WordPress block editor (Gutenberg)** on the Cloudways staging site. This GitHub repo serves as version control backup and is not the primary development environment.
 
-- **WordPress** (latest) on port **8080**
-- **MySQL 8.0** on port **3306**
+### Staging Site
 
-### Starting the development environment
+- **Frontend**: https://wordpress-1344959-6315794.cloudwaysapps.com/
+- **Admin panel**: https://wordpress-1344959-6315794.cloudwaysapps.com/wp-admin/
+- **Credentials**: Stored as secrets `WP_ADMIN_USER` and `WP_ADMIN_PASSWORD`
 
+### Installed Stack
+
+| Component | Version/Details |
+|-----------|-----------------|
+| **Theme** | Kadence (free, block-based) |
+| **Kadence Blocks** | Advanced Gutenberg blocks plugin |
+| **WPForms Lite** | Contact/booking form with in-WP entries inbox |
+| **Breeze** | Cloudways caching plugin (pre-installed) |
+| **Object Cache Pro** | Redis object cache (pre-installed by Cloudways) |
+
+### Authenticating with the WordPress REST API
+
+WordPress on Cloudways does **not** have Basic Auth enabled. To make authenticated REST API calls:
+
+1. Log in via `wp-login.php` using curl with cookie jar (`-c` / `-b` flags)
+2. Obtain a REST nonce from `admin-ajax.php?action=rest-nonce`
+3. Pass the nonce via `X-WP-Nonce` header on subsequent API calls
+
+Example:
 ```bash
-# Start Docker daemon (required in Cloud Agent VMs)
-sudo dockerd &>/tmp/dockerd.log &
-sleep 5
-sudo chmod 666 /var/run/docker.sock
-
-# Start services
-docker compose up -d
+curl -s -L -c /tmp/wp_cookies.txt -d "log=${WP_ADMIN_USER}&pwd=${WP_ADMIN_PASSWORD}&wp-submit=Log+In&redirect_to=%2Fwp-admin%2F&testcookie=1" -o /dev/null "https://wordpress-1344959-6315794.cloudwaysapps.com/wp-login.php"
+WP_NONCE=$(curl -s -b /tmp/wp_cookies.txt "https://wordpress-1344959-6315794.cloudwaysapps.com/wp-admin/admin-ajax.php?action=rest-nonce")
+curl -s -b /tmp/wp_cookies.txt -H "X-WP-Nonce: ${WP_NONCE}" "https://wordpress-1344959-6315794.cloudwaysapps.com/wp-json/wp/v2/pages"
 ```
 
-Wait for MySQL health check to pass before accessing WordPress (~10–15 seconds).
+### Important Caveats
 
-### Accessing WordPress
+- **Breeze caching**: After making changes, you may need to flush the Breeze cache from wp-admin (Settings → Breeze → Purge All Cache) for changes to appear on the frontend.
+- **Customizer save via API**: The `customize_save` AJAX action may return a critical error on this Cloudways setup. Use the browser-based Customizer (via computerUse subagent) for theme customizer changes like Additional CSS, header/footer settings, and global colors.
+- **Page creation works well via REST API**: Creating/updating pages and posts via the REST API with Gutenberg block markup works reliably. Use Python scripts to avoid shell quoting issues with complex block HTML.
+- **Additional CSS is set via the Customizer**: The dark theme overrides (black backgrounds, light text for header/footer) are stored in the WordPress Customizer → Additional CSS, not in theme files.
 
-- **Frontend**: http://localhost:8080/
-- **Admin panel**: http://localhost:8080/wp-admin/
-- **Admin credentials**: `admin` / `admin123`
+### Local Docker Environment
 
-### WP-CLI
+A `docker-compose.yml` is provided for local development/testing with WordPress + MySQL. See the `docker-compose.yml` file for details. This is secondary to the Cloudways staging site.
 
-WP-CLI is installed inside the WordPress container. Run commands with:
+### Current Site Structure (Pages)
 
-```bash
-docker exec workspace-wordpress-1 wp <command> --allow-root
-```
+| Page | Slug | Purpose |
+|------|------|---------|
+| DJ UrbanT | `/` (static homepage) | Hero + stats + booking CTA |
+| Contact | `/contact/` | Booking form + WhatsApp button |
+| Privacy Policy | (draft) | Standard WP privacy policy |
 
-### Theme & Plugin Development
+### Build Phases (for reference)
 
-Custom themes and plugins are mounted from the repo:
+The site is being built to clone https://djurbant.com/ as a Gutenberg-managed WordPress site:
 
-- `./wp-content/themes/` → `/var/www/html/wp-content/themes/`
-- `./wp-content/plugins/` → `/var/www/html/wp-content/plugins/`
-
-Changes to files in these directories are reflected immediately in the running WordPress instance (no restart needed).
-
-### Important caveats
-
-- Docker daemon must be started manually in Cloud Agent VMs (it is not started automatically by the update script).
-- The `fuse-overlayfs` storage driver and `iptables-legacy` are required for Docker-in-Docker in the Cloud Agent VM environment.
-- WordPress data is stored in Docker volumes (`db_data`, `wp_data`). These persist across `docker compose down` / `up` cycles but not across VM rebuilds. After a VM rebuild, WordPress installation must be re-run via WP-CLI.
-- There are no lint checks, automated tests, or build steps defined yet — this is a fresh WordPress project scaffold.
+- **Phase 1** (done): Foundation — Kadence theme, dark global styles, plugins
+- **Phase 2** (done): Pages — Homepage scaffold, Contact page with WhatsApp
+- **Phase 3** (pending): Dynamic content — YouTube/Mixcloud embeds, carousel
+- **Phase 4** (pending): Polish — Custom CSS gradients, animations, responsive tweaks
+- **Phase 5** (pending): Go live — Push staging → live, domain setup
