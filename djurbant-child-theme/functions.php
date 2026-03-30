@@ -195,22 +195,105 @@ function djurbant_update_socials($request) {
 }
 
 /**
- * REST API endpoint for WPForms entries count (bookings)
+ * REST API endpoint for WPForms entries (bookings)
  */
 function djurbant_register_bookings_api() {
     register_rest_route('djurbant/v1', '/bookings-count', [
         'methods' => 'GET',
         'callback' => function() {
-            if (function_exists('wpforms_get_entries_count')) {
-                return rest_ensure_response(['count' => wpforms_get_entries_count(54)]);
+            global $wpdb;
+            $table = $wpdb->prefix . 'wpforms_entries';
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table'") === $table) {
+                $count = $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE form_id = 54");
+                return rest_ensure_response(['count' => (int) $count]);
             }
-            $entries = get_posts(['post_type' => 'wpforms_entry', 'post_status' => 'publish', 'numberposts' => -1, 'meta_query' => [['key' => 'form_id', 'value' => '54']]]);
-            return rest_ensure_response(['count' => count($entries)]);
+            return rest_ensure_response(['count' => 0]);
+        },
+        'permission_callback' => function() { return current_user_can('manage_options'); },
+    ]);
+
+    register_rest_route('djurbant/v1', '/bookings', [
+        'methods' => 'GET',
+        'callback' => function() {
+            global $wpdb;
+            $table = $wpdb->prefix . 'wpforms_entries';
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table'") !== $table) {
+                return rest_ensure_response([]);
+            }
+            $entries = $wpdb->get_results(
+                "SELECT entry_id, fields, status, date_created FROM $table WHERE form_id = 54 ORDER BY date_created DESC LIMIT 50",
+                ARRAY_A
+            );
+            $result = [];
+            foreach ($entries as $e) {
+                $fields = json_decode($e['fields'], true) ?: [];
+                $name = '';
+                $email = '';
+                $message = '';
+                foreach ($fields as $f) {
+                    $label = strtolower($f['name'] ?? '');
+                    if (strpos($label, 'name') !== false && !$name) $name = $f['value'] ?? '';
+                    elseif (strpos($label, 'email') !== false && !$email) $email = $f['value'] ?? '';
+                    elseif (strpos($label, 'message') !== false || strpos($label, 'comment') !== false) $message = $f['value'] ?? '';
+                }
+                $result[] = [
+                    'id' => $e['entry_id'],
+                    'name' => $name,
+                    'email' => $email,
+                    'message' => mb_substr($message, 0, 120),
+                    'status' => $e['status'] ?: 'new',
+                    'date' => $e['date_created'],
+                ];
+            }
+            return rest_ensure_response($result);
         },
         'permission_callback' => function() { return current_user_can('manage_options'); },
     ]);
 }
 add_action('rest_api_init', 'djurbant_register_bookings_api');
+
+/**
+ * REST API endpoint for reading/writing site content text (site-content.json)
+ */
+function djurbant_register_content_api() {
+    register_rest_route('djurbant/v1', '/content', [
+        [
+            'methods' => 'GET',
+            'callback' => function() {
+                $file = get_stylesheet_directory() . '/site-content.json';
+                if (!file_exists($file)) return new WP_Error('not_found', 'File not found', ['status' => 404]);
+                return rest_ensure_response(json_decode(file_get_contents($file), true));
+            },
+            'permission_callback' => function() { return current_user_can('manage_options'); },
+        ],
+        [
+            'methods' => 'POST',
+            'callback' => function($request) {
+                $file = get_stylesheet_directory() . '/site-content.json';
+                if (!file_exists($file)) return new WP_Error('not_found', 'File not found', ['status' => 404]);
+                $updates = $request->get_json_params();
+                if (!is_array($updates)) return new WP_Error('invalid', 'Invalid data', ['status' => 400]);
+                $data = json_decode(file_get_contents($file), true);
+                foreach ($updates as $path => $value) {
+                    $keys = explode('.', $path);
+                    $ref = &$data;
+                    foreach ($keys as $i => $key) {
+                        if ($i === count($keys) - 1) {
+                            $ref[$key] = $value;
+                        } else {
+                            if (!isset($ref[$key]) || !is_array($ref[$key])) $ref[$key] = [];
+                            $ref = &$ref[$key];
+                        }
+                    }
+                }
+                file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                return rest_ensure_response(['success' => true]);
+            },
+            'permission_callback' => function() { return current_user_can('manage_options'); },
+        ],
+    ]);
+}
+add_action('rest_api_init', 'djurbant_register_content_api');
 function djurbant_maybe_remove_kadence_wrappers() {
     $page_template = get_page_template_slug();
     if ($page_template && strpos($page_template, 'page-templates/') === 0) {

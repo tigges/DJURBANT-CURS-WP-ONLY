@@ -680,3 +680,188 @@ function bindAll() {
 
 bindAll();
 initAuth();
+
+/* ── Real data integration (WordPress REST API) ── */
+(function () {
+  const cfg = window.__djurbantAdmin;
+  if (!cfg || !cfg.restBase) return;
+
+  const headers = { 'X-WP-Nonce': cfg.restNonce, 'Content-Type': 'application/json' };
+
+  /* ── Bookings: fetch real WPForms entries ── */
+  fetch(cfg.restBase + '/bookings', { headers })
+    .then(r => r.json())
+    .then(entries => {
+      if (!Array.isArray(entries)) return;
+      const tbody = document.getElementById('bookings-table-body');
+      if (tbody) {
+        tbody.innerHTML = '';
+        if (entries.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--admin-muted)">No booking requests yet. Submissions from the contact form will appear here.</td></tr>';
+        } else {
+          entries.forEach(e => {
+            const row = document.createElement('tr');
+            const statusClass = e.status === 'new' ? 'admin-badge-danger' : '';
+            const statusLabel = e.status === 'new' ? 'New' : (e.status === 'read' ? 'Read' : e.status);
+            const date = new Date(e.date);
+            const dateStr = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            row.innerHTML = '<td><span class="admin-badge ' + statusClass + '">' + statusLabel + '</span></td>'
+              + '<td><strong>' + (e.name || '—') + '</strong><br><small style="color:var(--admin-muted)">' + (e.email || '') + '</small></td>'
+              + '<td>' + dateStr + '</td>'
+              + '<td>' + (e.message ? e.message.substring(0, 80) + (e.message.length > 80 ? '…' : '') : '—') + '</td>'
+              + '<td colspan="2"></td>'
+              + '<td><a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.25rem 0.6rem" href="' + cfg.wpAdminUrl + 'admin.php?page=wpforms-entries&view=details&entry_id=' + e.id + '" target="_blank">View</a></td>';
+            tbody.appendChild(row);
+          });
+        }
+      }
+      // Update badges
+      const newCount = entries.filter(e => e.status === 'new').length;
+      const totalCount = entries.length;
+      ['bookings-unread-badge', 'home-bookings-badge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = String(newCount);
+      });
+      const unreadVal = document.getElementById('unread-stat-value');
+      if (unreadVal) unreadVal.textContent = String(newCount);
+      const dashVal = document.getElementById('dashboard-bookings-value');
+      if (dashVal) dashVal.textContent = String(totalCount);
+      const meta = document.getElementById('home-bookings-meta');
+      if (meta) meta.textContent = newCount > 0 ? newCount + ' new booking request' + (newCount > 1 ? 's' : '') : 'No unread venue requests.';
+    })
+    .catch(() => {});
+
+  /* ── Socials: fetch real data + enable editing ── */
+  function renderSocialsTable(socialsObj, tbodyId, editable) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const keys = Object.keys(socialsObj);
+    keys.forEach((key, idx) => {
+      const s = socialsObj[key];
+      const row = document.createElement('tr');
+      row.innerHTML = '<td><strong>' + (s.label || key) + '</strong></td>'
+        + '<td>' + (editable
+          ? '<input type="url" class="socials-url-input" data-key="' + key + '" value="' + (s.url || '') + '" style="width:100%;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.35rem 0.5rem;font-size:0.85rem" />'
+          : '<a href="' + (s.url || '#') + '" target="_blank" style="color:var(--map-accent,#0078d4)">' + (s.url || '') + '</a>')
+        + '</td>'
+        + '<td>' + (editable
+          ? '<label style="cursor:pointer"><input type="checkbox" class="socials-enabled-input" data-key="' + key + '"' + (s.enabled !== false ? ' checked' : '') + ' /> On</label>'
+          : (s.enabled !== false ? '✓' : '—'))
+        + '</td>';
+      tbody.appendChild(row);
+    });
+    if (editable) {
+      const saveRow = document.createElement('tr');
+      saveRow.innerHTML = '<td colspan="3" style="text-align:right;padding-top:0.5rem"><button id="save-socials-btn" class="admin-btn admin-btn-solid" type="button" style="font-size:0.82rem">Save changes</button><span id="socials-save-status" style="margin-left:0.6rem;font-size:0.82rem;color:var(--admin-muted)"></span></td>';
+      tbody.appendChild(saveRow);
+      setTimeout(() => {
+        const saveBtn = document.getElementById('save-socials-btn');
+        if (saveBtn) saveBtn.addEventListener('click', () => saveSocials(socialsObj));
+      }, 0);
+    }
+  }
+
+  function saveSocials(socialsObj) {
+    const urlInputs = document.querySelectorAll('.socials-url-input');
+    const enabledInputs = document.querySelectorAll('.socials-enabled-input');
+    urlInputs.forEach(inp => {
+      const key = inp.dataset.key;
+      if (socialsObj[key]) socialsObj[key].url = inp.value;
+    });
+    enabledInputs.forEach(inp => {
+      const key = inp.dataset.key;
+      if (socialsObj[key]) socialsObj[key].enabled = inp.checked;
+    });
+    const status = document.getElementById('socials-save-status');
+    if (status) status.textContent = 'Saving…';
+    fetch(cfg.restBase + '/socials', {
+      method: 'POST', headers, body: JSON.stringify(socialsObj)
+    })
+      .then(r => r.json())
+      .then(d => {
+        if (status) status.textContent = d.success ? '✓ Saved' : 'Error saving';
+        setTimeout(() => { if (status) status.textContent = ''; }, 3000);
+      })
+      .catch(() => { if (status) status.textContent = 'Network error'; });
+  }
+
+  fetch(cfg.restBase + '/socials', { headers })
+    .then(r => r.json())
+    .then(socialsObj => {
+      renderSocialsTable(socialsObj, 'social-links-table-body', true);
+      renderSocialsTable(socialsObj, 'dashboard-social-links-body', false);
+    })
+    .catch(() => {});
+
+  /* ── Content editor: fetch site-content.json + build form ── */
+  const contentPanel = document.querySelector('[data-view-panel="socials"]');
+  if (contentPanel) {
+    contentPanel.querySelector('.admin-view-head h1').textContent = 'Content & Socials';
+    contentPanel.querySelector('.admin-view-head p').textContent = 'Edit site text content and social links. Changes update the live site immediately.';
+    const block = contentPanel.querySelector('.admin-card');
+    if (block) block.innerHTML = '<div id="content-editor-loading" style="color:var(--admin-muted)">Loading content…</div>';
+
+    fetch(cfg.restBase + '/content', { headers })
+      .then(r => r.json())
+      .then(data => {
+        if (!block) return;
+        const fields = [
+          { path: 'pages.home.hero.tagline', label: 'Hero tagline', type: 'text' },
+          { path: 'pages.home.bestOf.title', label: '"Best of Artist" heading', type: 'text' },
+          { path: 'pages.home.bookingBand.title', label: 'Booking band title', type: 'text' },
+          { path: 'pages.home.bookingBand.buttonLabel', label: 'Booking button label', type: 'text' },
+          { path: 'pages.contact.title', label: 'Contact page title', type: 'text' },
+          { path: 'pages.contact.introText', label: 'Contact intro text', type: 'textarea' },
+          { path: 'global.meta.replySlaText', label: 'Reply SLA text', type: 'text' },
+          { path: 'global.ctaDefaults.bookLabel', label: 'Header "Book" button label', type: 'text' },
+        ];
+
+        function getByPath(obj, path) {
+          return path.split('.').reduce((o, k) => o && o[k], obj);
+        }
+
+        let html = '<h3 style="margin:0 0 1rem">Site Text Content</h3>';
+        html += '<div style="display:grid;gap:0.8rem">';
+        fields.forEach(f => {
+          const val = getByPath(data, f.path) || '';
+          const escapedVal = val.replace(/"/g, '&quot;').replace(/</g, '&lt;');
+          if (f.type === 'textarea') {
+            html += '<label style="display:block"><span style="font-size:0.82rem;font-weight:600;color:var(--admin-text)">' + f.label + '</span>'
+              + '<textarea class="content-field" data-path="' + f.path + '" rows="3" style="width:100%;margin-top:0.3rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.5rem 0.6rem;font-size:0.88rem;font-family:inherit;resize:vertical">' + escapedVal + '</textarea></label>';
+          } else {
+            html += '<label style="display:block"><span style="font-size:0.82rem;font-weight:600;color:var(--admin-text)">' + f.label + '</span>'
+              + '<input type="text" class="content-field" data-path="' + f.path + '" value="' + escapedVal + '" style="width:100%;margin-top:0.3rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.45rem 0.6rem;font-size:0.88rem" /></label>';
+          }
+        });
+        html += '</div>';
+        html += '<div style="margin-top:1rem;display:flex;align-items:center;gap:0.8rem">'
+          + '<button id="save-content-btn" class="admin-btn admin-btn-solid" type="button">Save content</button>'
+          + '<span id="content-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>'
+          + '</div>';
+
+        block.innerHTML = html;
+
+        document.getElementById('save-content-btn').addEventListener('click', () => {
+          const updates = {};
+          document.querySelectorAll('.content-field').forEach(el => {
+            updates[el.dataset.path] = el.value;
+          });
+          const status = document.getElementById('content-save-status');
+          status.textContent = 'Saving…';
+          fetch(cfg.restBase + '/content', {
+            method: 'POST', headers, body: JSON.stringify(updates)
+          })
+            .then(r => r.json())
+            .then(d => {
+              status.textContent = d.success ? '✓ Saved — refresh the site to see changes' : 'Error';
+              setTimeout(() => { status.textContent = ''; }, 5000);
+            })
+            .catch(() => { status.textContent = 'Network error'; });
+        });
+      })
+      .catch(() => {
+        if (block) block.innerHTML = '<p style="color:var(--admin-muted)">Could not load content. Check REST API.</p>';
+      });
+  }
+})();

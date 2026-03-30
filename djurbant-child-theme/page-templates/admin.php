@@ -436,6 +436,14 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
       <a class="admin-btn admin-btn-outline" href="<?php echo wp_logout_url(home_url('/')); ?>">Logout</a>
     </aside>
 
+    <script>
+    window.__djurbantAdmin = {
+      restBase: '<?php echo esc_url(rest_url('djurbant/v1')); ?>',
+      restNonce: '<?php echo wp_create_nonce('wp_rest'); ?>',
+      wpAdminUrl: '<?php echo esc_url(admin_url()); ?>',
+      formId: 54
+    };
+    </script>
     <script src="<?php echo $theme_uri; ?>/admin.js"></script>
     <?php wp_footer(); ?>
 </body>
