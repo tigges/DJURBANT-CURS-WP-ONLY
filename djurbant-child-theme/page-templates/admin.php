@@ -149,14 +149,24 @@ function djurbant_get_nested($arr, $path) {
               </article>
             </section>
             <section class="admin-quick-grid">
-              <button class="admin-card admin-quick-card admin-quick-live" type="button" data-open-view="dashboard">
+              <section class="admin-card admin-quick-card admin-quick-live">
                 <div class="admin-quick-head"><span class="admin-quick-icon">▶</span><span id="home-youtube-badge" class="admin-badge admin-badge-amber">● Live now</span></div>
-                <h2>YouTube</h2><p>Channel status and latest stream controls.</p><span class="admin-quick-link">View dashboard →</span>
-              </button>
-              <button class="admin-card admin-quick-card admin-quick-alert" type="button" data-open-view="bookings">
+                <h2>YouTube Channel</h2>
+                <p style="color:var(--admin-muted);margin:0.3rem 0 0.6rem">DJ UrbanT channel controls and live shortcuts.</p>
+                <div class="admin-inline-actions">
+                  <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">Open YouTube Studio</a>
+                  <a class="admin-btn admin-btn-outline" href="https://www.youtube.com/@djurbant/live" target="_blank" rel="noopener noreferrer">View Live</a>
+                </div>
+              </section>
+              <section class="admin-card admin-quick-card admin-quick-alert">
                 <div class="admin-quick-head"><span class="admin-quick-icon">⌕</span><span id="home-bookings-badge" class="admin-badge admin-badge-danger">0</span></div>
-                <h2>Booking requests</h2><p id="home-bookings-meta">No unread venue requests.</p><span class="admin-quick-link">Open inbox →</span>
-              </button>
+                <h2>Bookings</h2>
+                <p id="home-bookings-meta" style="color:var(--admin-muted);margin:0.3rem 0 0.6rem">Inbox and routing controls.</p>
+                <div class="admin-inline-actions">
+                  <button class="admin-btn admin-btn-outline" type="button" data-open-view="bookings">Open bookings</button>
+                  <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=wpforms-entries&view=list&form_id=54'); ?>" target="_blank">View in WP Admin</a>
+                </div>
+              </section>
               <button class="admin-card admin-quick-card" type="button" data-open-view="analytics">
                 <div class="admin-quick-head"><span class="admin-quick-icon">▤</span></div>
                 <h2>Site stats</h2><p>7-day trend, traffic and engagement.</p><span class="admin-quick-link">Open analytics →</span>
@@ -165,46 +175,14 @@ function djurbant_get_nested($arr, $path) {
                 <div class="admin-quick-head"><span class="admin-quick-icon">▣</span></div>
                 <h2>Pages</h2><p><?php echo wp_count_posts('page')->publish; ?> pages published.</p><span class="admin-quick-link">Manage pages →</span>
               </button>
-              <button class="admin-card admin-quick-card" type="button" data-open-view="uploads">
-                <div class="admin-quick-head"><span class="admin-quick-icon">⇪</span></div>
-                <h2>Uploads</h2><p>Last upload: Set #434 • Mar 15, 2026.</p><span class="admin-quick-link">Open uploads →</span>
-              </button>
               <button class="admin-card admin-quick-card" type="button" data-open-view="socials">
                 <div class="admin-quick-head"><span class="admin-quick-icon">⎔</span></div>
                 <h2>Social links</h2><p>6 platforms active in navigation.</p><span class="admin-quick-link">Edit socials →</span>
               </button>
-            </section>
-            <div id="home-youtube-bookings-section" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-              <section id="home-youtube-section" class="admin-card admin-block">
-                <div class="admin-block-head"><h2>YouTube Channel</h2></div>
-                <p style="color:var(--admin-muted);margin:0 0 0.8rem">DJ UrbanT channel controls and live shortcuts.</p>
-                <div class="admin-inline-actions">
-                  <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">Open YouTube Studio</a>
-                  <a class="admin-btn admin-btn-outline" href="https://www.youtube.com/@djurbant/live" target="_blank" rel="noopener noreferrer">View Live</a>
-                </div>
-              </section>
-              <section id="home-bookings-section" class="admin-card admin-block">
-                <div class="admin-block-head"><h2>Bookings</h2></div>
-                <p style="color:var(--admin-muted);margin:0 0 0.8rem">Inbox and routing controls.</p>
-                <div class="admin-inline-actions">
-                  <button class="admin-btn admin-btn-outline" type="button" data-open-view="bookings">Open bookings</button>
-                  <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=wpforms-entries&view=list&form_id=54'); ?>" target="_blank">View in WP Admin</a>
-                </div>
-              </section>
-            </div>
-            <section id="home-platforms-section" class="admin-stats-grid admin-stats-grid-compact">
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">YouTube</p><p class="admin-stat-value">4.8k</p><p class="admin-stat-meta">subscribers • live</p></article>
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Mixcloud</p><p class="admin-stat-value">2.1k</p><p class="admin-stat-meta">followers • 124k plays</p></article>
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Instagram</p><p class="admin-stat-value">7.4k</p><p class="admin-stat-meta">followers • 7d reach</p></article>
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">TikTok</p><p class="admin-stat-value">5.9k</p><p class="admin-stat-meta">followers • 32 videos</p></article>
-            </section>
-            <section class="admin-card admin-customize" aria-label="Customise this page">
-              <div class="admin-customize-left">✎ Customise this page</div>
-              <div class="admin-customize-chips">
-                <button class="admin-chip is-on" type="button" data-home-chip="youtube-bookings">YouTube &amp; Bookings</button>
-                <button class="admin-chip is-on" type="button" data-home-chip="platforms">Platform Stats</button>
-              </div>
-              <button id="home-customize-reset" class="admin-reset-btn" type="button">Reset</button>
+              <button class="admin-card admin-quick-card" type="button" data-open-view="content">
+                <div class="admin-quick-head"><span class="admin-quick-icon">✎</span></div>
+                <h2>Content</h2><p>Edit site text and media.</p><span class="admin-quick-link">Edit content →</span>
+              </button>
             </section>
           </section>
 
