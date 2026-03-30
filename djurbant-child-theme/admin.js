@@ -681,6 +681,22 @@ function bindAll() {
 bindAll();
 initAuth();
 
+/* ── Page tabs switching ── */
+document.querySelectorAll('.admin-page-tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var tab = btn.dataset.pageTab;
+    document.querySelectorAll('.admin-page-tab').forEach(function(b) {
+      var isActive = b.dataset.pageTab === tab;
+      b.classList.toggle('is-active', isActive);
+      b.style.background = isActive ? 'var(--gradient)' : 'var(--admin-surface)';
+      b.style.color = isActive ? '#fff' : 'var(--admin-text)';
+    });
+    document.querySelectorAll('.admin-page-panel').forEach(function(p) {
+      p.hidden = p.dataset.pagePanel !== tab;
+    });
+  });
+});
+
 /* ── Real data integration (WordPress REST API) ── */
 (function () {
   const cfg = window.__djurbantAdmin;
