@@ -93,6 +93,9 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
             <button class="admin-nav-item" type="button" data-view="management">
               <span class="admin-nav-icon">☰</span><span>Management</span>
             </button>
+            <button class="admin-nav-item" type="button" data-view="sitemap">
+              <span class="admin-nav-icon">◫</span><span>Site Map</span>
+            </button>
           </nav>
         </aside>
 
@@ -285,8 +288,76 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
           </section>
 
           <section class="admin-view" data-view-panel="socials" hidden>
-            <div class="admin-view-head"><h1>Socials</h1><p>Social links are managed in site-content.json.</p></div>
-            <section class="admin-card admin-block"><p>Edit social links in the theme's site-content.json or via the Customizer.</p></section>
+            <div class="admin-view-head"><h1>Content &amp; Socials</h1><p>Edit site text content and social links. Changes update the live site immediately.</p></div>
+
+            <?php
+            $sc_file = get_stylesheet_directory() . '/site-content.json';
+            $sc_data = file_exists($sc_file) ? json_decode(file_get_contents($sc_file), true) : [];
+            $socials = $sc_data['global']['socialLinks'] ?? [];
+
+            $content_fields = [
+                ['path' => 'pages.home.hero.tagline', 'label' => 'Hero tagline'],
+                ['path' => 'pages.home.bestOf.title', 'label' => '"Best of Artist" heading'],
+                ['path' => 'pages.home.bookingBand.title', 'label' => 'Booking band title'],
+                ['path' => 'pages.home.bookingBand.buttonLabel', 'label' => 'Booking button label'],
+                ['path' => 'pages.contact.title', 'label' => 'Contact page title'],
+                ['path' => 'pages.contact.introText', 'label' => 'Contact intro text', 'type' => 'textarea'],
+                ['path' => 'global.meta.replySlaText', 'label' => 'Reply SLA text'],
+                ['path' => 'global.ctaDefaults.bookLabel', 'label' => 'Header "Book" button label'],
+            ];
+
+            function djurbant_get_nested($arr, $path) {
+                $keys = explode('.', $path);
+                $val = $arr;
+                foreach ($keys as $k) { $val = $val[$k] ?? null; if ($val === null) return ''; }
+                return is_string($val) ? $val : '';
+            }
+            ?>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Site Text Content</h2></div>
+              <div style="display:grid;gap:0.8rem;padding:0 0 0.5rem">
+                <?php foreach ($content_fields as $f):
+                  $val = djurbant_get_nested($sc_data, $f['path']);
+                  $type = $f['type'] ?? 'text';
+                ?>
+                <label style="display:block">
+                  <span style="font-size:0.82rem;font-weight:600;color:var(--admin-text)"><?php echo esc_html($f['label']); ?></span>
+                  <?php if ($type === 'textarea'): ?>
+                  <textarea class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" rows="3" style="width:100%;margin-top:0.3rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.5rem 0.6rem;font-size:0.88rem;font-family:inherit;resize:vertical"><?php echo esc_textarea($val); ?></textarea>
+                  <?php else: ?>
+                  <input type="text" class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" value="<?php echo esc_attr($val); ?>" style="width:100%;margin-top:0.3rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.45rem 0.6rem;font-size:0.88rem" />
+                  <?php endif; ?>
+                </label>
+                <?php endforeach; ?>
+              </div>
+              <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
+                <button id="save-content-btn" class="admin-btn admin-btn-solid" type="button">Save content</button>
+                <span id="content-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>Social Links</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>Platform</th><th>URL</th><th>Enabled</th></tr></thead>
+                  <tbody id="real-socials-tbody">
+                    <?php foreach ($socials as $key => $s): ?>
+                    <tr>
+                      <td><strong><?php echo esc_html($s['label'] ?? $key); ?></strong></td>
+                      <td><input type="url" class="socials-url-input" data-key="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($s['url'] ?? ''); ?>" style="width:100%;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.35rem 0.5rem;font-size:0.85rem" /></td>
+                      <td><label style="cursor:pointer"><input type="checkbox" class="socials-enabled-input" data-key="<?php echo esc_attr($key); ?>"<?php echo ($s['enabled'] !== false) ? ' checked' : ''; ?> /> On</label></td>
+                    </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
+                <button id="save-socials-btn" class="admin-btn admin-btn-solid" type="button">Save social links</button>
+                <span id="socials-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>
+              </div>
+            </section>
           </section>
 
           <section class="admin-view" data-view-panel="youtube" hidden>
@@ -411,6 +482,56 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
                     <tr><td>Users &amp; roles</td><td>Users</td><td><a href="<?php echo admin_url('users.php'); ?>" target="_blank">Users</a></td><td>Manage access</td></tr>
                   </tbody>
                 </table>
+              </div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="sitemap" hidden>
+            <div class="admin-view-head">
+              <h1>Site Map</h1>
+              <p>All pages and their status. Also accessible at <a href="<?php echo home_url('/map/'); ?>" target="_blank" style="color:var(--map-accent,#0078d4)">/map/</a></p>
+            </div>
+            <?php
+            $all_pages = get_pages(['sort_column' => 'menu_order', 'sort_order' => 'ASC']);
+            $site_url = home_url('/');
+            ?>
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Published Pages</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>Page</th><th>URL</th><th>Template</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <?php foreach ($all_pages as $p):
+                      $tmpl = get_page_template_slug($p->ID) ?: 'default';
+                      $tmpl_short = str_replace('page-templates/', '', $tmpl);
+                      $status = $p->post_status === 'publish' ? 'Published' : ucfirst($p->post_status);
+                      $url = get_permalink($p->ID);
+                    ?>
+                    <tr>
+                      <td><strong><?php echo esc_html($p->post_title); ?></strong></td>
+                      <td><a href="<?php echo esc_url($url); ?>" target="_blank" style="color:var(--map-accent,#0078d4);font-size:0.85rem"><?php echo esc_html(str_replace($site_url, '/', $url)); ?></a></td>
+                      <td><code style="font-size:0.78rem;background:var(--admin-surface);padding:0.15rem 0.4rem;border-radius:4px"><?php echo esc_html($tmpl_short); ?></code></td>
+                      <td><span style="display:inline-block;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:0.18rem 0.55rem;border-radius:999px;<?php echo $p->post_status === 'publish' ? 'background:rgba(46,160,67,0.12);color:#1a7f37;border:1px solid rgba(46,160,67,0.3)' : 'background:rgba(207,34,46,0.1);color:#cf222e;border:1px solid rgba(207,34,46,0.3)'; ?>"><?php echo esc_html($status); ?></span></td>
+                      <td style="white-space:nowrap">
+                        <a class="admin-btn admin-btn-outline" style="font-size:0.75rem;padding:0.2rem 0.5rem" href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank">Edit</a>
+                        <a class="admin-btn admin-btn-outline" style="font-size:0.75rem;padding:0.2rem 0.5rem" href="<?php echo esc_url($url); ?>" target="_blank">View</a>
+                      </td>
+                    </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>Quick Links</h2></div>
+              <div class="admin-inline-actions" style="flex-wrap:wrap;gap:0.5rem">
+                <a class="admin-btn admin-btn-outline" href="<?php echo home_url('/'); ?>" target="_blank">Homepage</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo home_url('/video/'); ?>" target="_blank">Video</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo home_url('/audio/'); ?>" target="_blank">Audio</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo home_url('/contact/'); ?>" target="_blank">Contact</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo home_url('/map/'); ?>" target="_blank">Full Map Page</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url(); ?>" target="_blank">WP Admin</a>
               </div>
             </section>
           </section>
