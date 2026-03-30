@@ -83,9 +83,6 @@ function djurbant_get_nested($arr, $path) {
               <span class="admin-nav-icon">⌂</span><span>Admin Home</span>
             </button>
             <p class="admin-nav-group-label">Site</p>
-            <button class="admin-nav-item" type="button" data-view="dashboard">
-              <span class="admin-nav-icon">▦</span><span>Dashboard</span>
-            </button>
             <button class="admin-nav-item" type="button" data-view="analytics">
               <span class="admin-nav-icon">▤</span><span>Analytics</span>
             </button>
@@ -201,87 +198,19 @@ function djurbant_get_nested($arr, $path) {
                 </div>
               </section>
             </div>
-            <section id="home-socials-section" class="admin-card admin-block">
-              <div class="admin-block-head"><h2>Social links</h2></div>
-              <div class="admin-table-wrap">
-                <table class="admin-table"><thead><tr><th>Platform</th><th>URL</th><th>In nav</th></tr></thead>
-                <tbody id="social-links-table-body"></tbody></table>
-              </div>
-            </section>
-            <section class="admin-card admin-customize" aria-label="Customise this page">
-              <div class="admin-customize-left">✎ Customise this page</div>
-              <div class="admin-customize-chips">
-                <button class="admin-chip is-on" type="button" data-home-chip="youtube-bookings">YouTube &amp; Bookings</button>
-                <button class="admin-chip is-on" type="button" data-home-chip="socials">Socials</button>
-              </div>
-              <button id="home-customize-reset" class="admin-reset-btn" type="button">Reset</button>
-            </section>
-          </section>
-
-          <section class="admin-view" data-view-panel="dashboard" hidden>
-            <div class="admin-view-head"><h1>Dashboard</h1><p>Operational dashboard with toggleable modules.</p></div>
-            <section id="dashboard-site-stats" class="admin-stats-grid admin-stats-grid-compact">
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Site visits today</p><p class="admin-stat-value">142</p><p class="admin-stat-meta admin-stat-up">↑ 18%</p></article>
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Site visits (7d)</p><p class="admin-stat-value">892</p><p class="admin-stat-meta admin-stat-up">↑ 12%</p></article>
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Booking form views</p><p class="admin-stat-value">67</p><p class="admin-stat-meta">last 7 days</p></article>
-              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Booking requests</p><p id="dashboard-bookings-value" class="admin-stat-value">0</p><p class="admin-stat-meta">inbox total</p></article>
-            </section>
-            <section id="dashboard-platforms" class="admin-stats-grid admin-stats-grid-compact">
+            <section id="home-platforms-section" class="admin-stats-grid admin-stats-grid-compact">
               <article class="admin-card admin-stat-card"><p class="admin-stat-label">YouTube</p><p class="admin-stat-value">4.8k</p><p class="admin-stat-meta">subscribers • live</p></article>
               <article class="admin-card admin-stat-card"><p class="admin-stat-label">Mixcloud</p><p class="admin-stat-value">2.1k</p><p class="admin-stat-meta">followers • 124k plays</p></article>
               <article class="admin-card admin-stat-card"><p class="admin-stat-label">Instagram</p><p class="admin-stat-value">7.4k</p><p class="admin-stat-meta">followers • 7d reach</p></article>
               <article class="admin-card admin-stat-card"><p class="admin-stat-label">TikTok</p><p class="admin-stat-value">5.9k</p><p class="admin-stat-meta">followers • 32 videos</p></article>
             </section>
-            <section class="admin-dashboard-grid">
-              <article id="dashboard-pages" class="admin-card admin-block">
-                <div class="admin-block-head"><h2>Pages</h2></div>
-                <ul class="admin-simple-list">
-                  <?php
-                  $pages = get_pages(['sort_column' => 'menu_order', 'sort_order' => 'ASC']);
-                  foreach ($pages as $p) {
-                      $status = $p->post_status === 'publish' ? 'Published' : ucfirst($p->post_status);
-                      echo '<li>' . esc_html($p->post_title) . ' <span>' . esc_html($status) . '</span></li>';
-                  }
-                  ?>
-                </ul>
-              </article>
-              <article id="dashboard-uploads" class="admin-card admin-block">
-                <div class="admin-block-head"><h2>Uploads</h2></div>
-                <p>Drop zone and recent upload tracking module.</p>
-              </article>
-              <article id="dashboard-youtube" class="admin-card admin-block">
-                <div class="admin-block-head"><h2>YouTube Channel</h2></div>
-                <p>DJ UrbanT channel controls and live shortcuts.</p>
-                <div class="admin-inline-actions">
-                  <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">Open YouTube Studio</a>
-                  <a class="admin-btn admin-btn-outline" href="https://www.youtube.com/@djurbant/live" target="_blank" rel="noopener noreferrer">View Live</a>
-                </div>
-              </article>
-              <article id="dashboard-bookings" class="admin-card admin-block">
-                <div class="admin-block-head"><h2>Bookings</h2></div>
-                <p>Inbox and routing controls.</p>
-                <button class="admin-btn admin-btn-outline" type="button" data-open-view="bookings">Open bookings</button>
-              </article>
-            </section>
-            <section id="dashboard-socials" class="admin-card admin-block">
-              <div class="admin-block-head"><h2>Social links</h2></div>
-              <div class="admin-table-wrap">
-                <table class="admin-table"><thead><tr><th>Platform</th><th>URL</th><th>In nav</th></tr></thead>
-                <tbody id="dashboard-social-links-body"></tbody></table>
+            <section class="admin-card admin-customize" aria-label="Customise this page">
+              <div class="admin-customize-left">✎ Customise this page</div>
+              <div class="admin-customize-chips">
+                <button class="admin-chip is-on" type="button" data-home-chip="youtube-bookings">YouTube &amp; Bookings</button>
+                <button class="admin-chip is-on" type="button" data-home-chip="platforms">Platform Stats</button>
               </div>
-            </section>
-            <section class="admin-card admin-customize" aria-label="Customise dashboard">
-              <div class="admin-customize-left">✎ Customise dashboard</div>
-              <div class="admin-customize-chips admin-customize-chips-wrap">
-                <button class="admin-chip is-on" type="button" data-dashboard-chip="siteStats">Site stats</button>
-                <button class="admin-chip is-on" type="button" data-dashboard-chip="platforms">Platforms</button>
-                <button class="admin-chip is-on" type="button" data-dashboard-chip="pages">Pages</button>
-                <button class="admin-chip is-on" type="button" data-dashboard-chip="uploads">Uploads</button>
-                <button class="admin-chip is-on" type="button" data-dashboard-chip="youtube">YouTube</button>
-                <button class="admin-chip is-on" type="button" data-dashboard-chip="bookings">Bookings</button>
-                <button class="admin-chip is-on" type="button" data-dashboard-chip="socials">Socials</button>
-              </div>
-              <button id="dashboard-customize-reset" class="admin-reset-btn" type="button">Reset</button>
+              <button id="home-customize-reset" class="admin-reset-btn" type="button">Reset</button>
             </section>
           </section>
 
