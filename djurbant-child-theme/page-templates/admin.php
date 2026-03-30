@@ -31,6 +31,27 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
 <?php wp_body_open(); ?>
 
     <div id="admin-app" class="admin-app">
+<?php
+$sc_file = get_stylesheet_directory() . '/site-content.json';
+$sc_data = file_exists($sc_file) ? json_decode(file_get_contents($sc_file), true) : [];
+$socials = $sc_data['global']['socialLinks'] ?? [];
+$content_fields = [
+    ['path' => 'pages.home.hero.tagline', 'label' => 'Hero tagline'],
+    ['path' => 'pages.home.bestOf.title', 'label' => '"Best of Artist" heading'],
+    ['path' => 'pages.home.bookingBand.title', 'label' => 'Booking band title'],
+    ['path' => 'pages.home.bookingBand.buttonLabel', 'label' => 'Booking button label'],
+    ['path' => 'pages.contact.title', 'label' => 'Contact page title'],
+    ['path' => 'pages.contact.introText', 'label' => 'Contact intro text', 'type' => 'textarea'],
+    ['path' => 'global.meta.replySlaText', 'label' => 'Reply SLA text'],
+    ['path' => 'global.ctaDefaults.bookLabel', 'label' => 'Header "Book" button label'],
+];
+function djurbant_get_nested($arr, $path) {
+    $keys = explode('.', $path);
+    $val = $arr;
+    foreach ($keys as $k) { $val = $val[$k] ?? null; if ($val === null) return ''; }
+    return is_string($val) ? $val : '';
+}
+?>
       <header class="admin-topbar">
         <div class="admin-topbar-left">
           <button id="sidebar-toggle-btn" class="admin-icon-btn mobile-only" type="button" aria-label="Open menu">☰</button>
@@ -288,57 +309,54 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
           </section>
 
           <section class="admin-view" data-view-panel="socials" hidden>
-            <div class="admin-view-head"><h1>Content &amp; Socials</h1><p>Edit site text content and social links. Changes update the live site immediately.</p></div>
-
-            <?php
-            $sc_file = get_stylesheet_directory() . '/site-content.json';
-            $sc_data = file_exists($sc_file) ? json_decode(file_get_contents($sc_file), true) : [];
-            $socials = $sc_data['global']['socialLinks'] ?? [];
-
-            $content_fields = [
-                ['path' => 'pages.home.hero.tagline', 'label' => 'Hero tagline'],
-                ['path' => 'pages.home.bestOf.title', 'label' => '"Best of Artist" heading'],
-                ['path' => 'pages.home.bookingBand.title', 'label' => 'Booking band title'],
-                ['path' => 'pages.home.bookingBand.buttonLabel', 'label' => 'Booking button label'],
-                ['path' => 'pages.contact.title', 'label' => 'Contact page title'],
-                ['path' => 'pages.contact.introText', 'label' => 'Contact intro text', 'type' => 'textarea'],
-                ['path' => 'global.meta.replySlaText', 'label' => 'Reply SLA text'],
-                ['path' => 'global.ctaDefaults.bookLabel', 'label' => 'Header "Book" button label'],
-            ];
-
-            function djurbant_get_nested($arr, $path) {
-                $keys = explode('.', $path);
-                $val = $arr;
-                foreach ($keys as $k) { $val = $val[$k] ?? null; if ($val === null) return ''; }
-                return is_string($val) ? $val : '';
-            }
-            ?>
+            <div class="admin-view-head"><h1>Content &amp; Socials</h1><p>Edit site text and social links. Preview shows where each field appears on the live site.</p></div>
 
             <section class="admin-card admin-block">
-              <div class="admin-block-head"><h2>Site Text Content</h2></div>
-              <div style="display:grid;gap:0.8rem;padding:0 0 0.5rem">
-                <?php foreach ($content_fields as $f):
-                  $val = djurbant_get_nested($sc_data, $f['path']);
-                  $type = $f['type'] ?? 'text';
-                ?>
-                <label style="display:block">
-                  <span style="font-size:0.82rem;font-weight:600;color:var(--admin-text)"><?php echo esc_html($f['label']); ?></span>
-                  <?php if ($type === 'textarea'): ?>
-                  <textarea class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" rows="3" style="width:100%;margin-top:0.3rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.5rem 0.6rem;font-size:0.88rem;font-family:inherit;resize:vertical"><?php echo esc_textarea($val); ?></textarea>
-                  <?php else: ?>
-                  <input type="text" class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" value="<?php echo esc_attr($val); ?>" style="width:100%;margin-top:0.3rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.45rem 0.6rem;font-size:0.88rem" />
-                  <?php endif; ?>
-                </label>
-                <?php endforeach; ?>
-              </div>
-              <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
-                <button id="save-content-btn" class="admin-btn admin-btn-solid" type="button">Save content</button>
-                <span id="content-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+                <div>
+                  <h3 style="margin:0 0 1rem;font-size:1rem">Site Text Content</h3>
+                  <div style="display:grid;gap:0.7rem">
+                    <?php foreach ($content_fields as $i => $f):
+                      $val = djurbant_get_nested($sc_data, $f['path']);
+                      $type = $f['type'] ?? 'text';
+                      $num = $i + 1;
+                    ?>
+                    <label style="display:block">
+                      <span style="font-size:0.8rem;font-weight:600;color:var(--admin-text)"><span style="display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;margin-right:0.35rem"><?php echo $num; ?></span><?php echo esc_html($f['label']); ?></span>
+                      <?php if ($type === 'textarea'): ?>
+                      <textarea class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" rows="2" style="width:100%;margin-top:0.25rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.4rem 0.55rem;font-size:0.85rem;font-family:inherit;resize:vertical"><?php echo esc_textarea($val); ?></textarea>
+                      <?php else: ?>
+                      <input type="text" class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" value="<?php echo esc_attr($val); ?>" style="width:100%;margin-top:0.25rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.38rem 0.55rem;font-size:0.85rem" />
+                      <?php endif; ?>
+                    </label>
+                    <?php endforeach; ?>
+                  </div>
+                  <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
+                    <button id="save-content-btn" class="admin-btn admin-btn-solid" type="button">Save content</button>
+                    <span id="content-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview</h3>
+                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000">
+                    <iframe src="<?php echo home_url('/'); ?>" style="width:200%;height:900px;transform:scale(0.5);transform-origin:top left;pointer-events:none;display:block;border:0" title="Live site preview"></iframe>
+                    <div style="position:absolute;top:0;left:0;width:50%;height:450px;pointer-events:none">
+                      <span style="position:absolute;top:48%;left:28%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">1</span>
+                      <span style="position:absolute;top:62%;left:10%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">2</span>
+                      <span style="position:absolute;top:87%;left:8%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">3</span>
+                      <span style="position:absolute;top:87%;right:12%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">4</span>
+                      <span style="position:absolute;top:4%;right:8%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">8</span>
+                      <span style="position:absolute;bottom:4%;left:35%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">9</span>
+                    </div>
+                  </div>
+                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match the edit fields on the left. <strong>⑨</strong> = Social links in footer (edited below).</p>
+                </div>
               </div>
             </section>
 
             <section class="admin-card admin-block" style="margin-top:1rem">
-              <div class="admin-block-head"><h2>Social Links</h2></div>
+              <div class="admin-block-head"><h2>⑨ Social Links</h2></div>
               <div class="admin-table-wrap">
                 <table class="admin-table">
                   <thead><tr><th>Platform</th><th>URL</th><th>Enabled</th></tr></thead>
@@ -371,8 +389,46 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
           </section>
 
           <section class="admin-view" data-view-panel="analytics" hidden>
-            <div class="admin-view-head"><h1>Analytics</h1><p>Analytics module.</p></div>
-            <section class="admin-card admin-block"><p>Connect Google Analytics or a stats plugin to populate this view.</p></section>
+            <div class="admin-view-head"><h1>Analytics</h1><p>Real-time site traffic from Koko Analytics.</p></div>
+
+            <section id="analytics-stats" class="admin-stats-grid admin-stats-grid-compact">
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Visitors today</p><p id="ana-today-visitors" class="admin-stat-value">—</p><p class="admin-stat-meta">unique visitors</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Page views (7d)</p><p id="ana-week-views" class="admin-stat-value">—</p><p class="admin-stat-meta">last 7 days</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Visitors (7d)</p><p id="ana-week-visitors" class="admin-stat-value">—</p><p class="admin-stat-meta">unique</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Page views (30d)</p><p id="ana-month-views" class="admin-stat-value">—</p><p class="admin-stat-meta">last 30 days</p></article>
+            </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>Visitors — Last 30 Days</h2></div>
+              <div id="analytics-chart" style="height:180px;display:flex;align-items:flex-end;gap:2px;padding:0.5rem 0">
+                <p style="color:var(--admin-muted);font-size:0.85rem">Loading chart…</p>
+              </div>
+            </section>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+              <section class="admin-card admin-block">
+                <div class="admin-block-head"><h2>Top Pages (7d)</h2></div>
+                <ul id="analytics-top-pages" class="admin-simple-list">
+                  <li style="color:var(--admin-muted)">Loading…</li>
+                </ul>
+              </section>
+              <section class="admin-card admin-block">
+                <div class="admin-block-head"><h2>Traffic Sources (7d)</h2></div>
+                <ul id="analytics-referrers" class="admin-simple-list">
+                  <li style="color:var(--admin-muted)">Loading…</li>
+                </ul>
+              </section>
+            </div>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>Advanced Analytics</h2></div>
+              <p style="color:var(--admin-muted);margin:0 0 0.8rem">For deeper insights, use one of these tools:</p>
+              <div class="admin-inline-actions" style="flex-wrap:wrap;gap:0.5rem">
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=koko-analytics'); ?>" target="_blank">📊 Koko Analytics Dashboard</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=googlesitekit-splash'); ?>" target="_blank" style="opacity:0.7">🔮 Google Site Kit (install later)</a>
+                <a class="admin-btn admin-btn-outline" href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" style="opacity:0.7">📈 Google Analytics (external)</a>
+              </div>
+            </section>
           </section>
 
           <section class="admin-view" data-view-panel="settings" hidden>

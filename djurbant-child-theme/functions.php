@@ -294,6 +294,65 @@ function djurbant_register_content_api() {
     ]);
 }
 add_action('rest_api_init', 'djurbant_register_content_api');
+
+/**
+ * REST API endpoint for Koko Analytics stats
+ */
+function djurbant_register_analytics_api() {
+    register_rest_route('djurbant/v1', '/analytics', [
+        'methods' => 'GET',
+        'callback' => function($request) {
+            global $wpdb;
+            $table_stats = $wpdb->prefix . 'koko_analytics_site_stats';
+            $table_posts = $wpdb->prefix . 'koko_analytics_post_stats';
+            $result = ['today' => 0, 'today_visitors' => 0, 'week' => 0, 'week_visitors' => 0, 'month' => 0, 'month_visitors' => 0, 'top_pages' => [], 'top_referrers' => [], 'daily' => []];
+
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_stats'") !== $table_stats) {
+                return rest_ensure_response($result);
+            }
+
+            $today = date('Y-m-d');
+            $week_ago = date('Y-m-d', strtotime('-7 days'));
+            $month_ago = date('Y-m-d', strtotime('-30 days'));
+
+            $today_row = $wpdb->get_row($wpdb->prepare("SELECT visitors, pageviews FROM $table_stats WHERE date = %s", $today), ARRAY_A);
+            $result['today'] = (int)($today_row['pageviews'] ?? 0);
+            $result['today_visitors'] = (int)($today_row['visitors'] ?? 0);
+
+            $week_row = $wpdb->get_row($wpdb->prepare("SELECT SUM(visitors) as visitors, SUM(pageviews) as pageviews FROM $table_stats WHERE date >= %s", $week_ago), ARRAY_A);
+            $result['week'] = (int)($week_row['pageviews'] ?? 0);
+            $result['week_visitors'] = (int)($week_row['visitors'] ?? 0);
+
+            $month_row = $wpdb->get_row($wpdb->prepare("SELECT SUM(visitors) as visitors, SUM(pageviews) as pageviews FROM $table_stats WHERE date >= %s", $month_ago), ARRAY_A);
+            $result['month'] = (int)($month_row['pageviews'] ?? 0);
+            $result['month_visitors'] = (int)($month_row['visitors'] ?? 0);
+
+            $daily = $wpdb->get_results($wpdb->prepare("SELECT date, visitors, pageviews FROM $table_stats WHERE date >= %s ORDER BY date ASC", $month_ago), ARRAY_A);
+            $result['daily'] = $daily ?: [];
+
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_posts'") === $table_posts) {
+                $top = $wpdb->get_results($wpdb->prepare("SELECT id as post_id, SUM(visitors) as visitors, SUM(pageviews) as pageviews FROM $table_posts WHERE date >= %s GROUP BY id ORDER BY pageviews DESC LIMIT 8", $week_ago), ARRAY_A);
+                foreach ($top as &$p) {
+                    $title = get_the_title($p['post_id']);
+                    $p['title'] = $title ?: '(ID: ' . $p['post_id'] . ')';
+                    $p['url'] = get_permalink($p['post_id']) ?: '';
+                }
+                $result['top_pages'] = $top ?: [];
+            }
+
+            $table_ref = $wpdb->prefix . 'koko_analytics_referrer_stats';
+            $table_ref_urls = $wpdb->prefix . 'koko_analytics_referrer_urls';
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_ref'") === $table_ref && $wpdb->get_var("SHOW TABLES LIKE '$table_ref_urls'") === $table_ref_urls) {
+                $refs = $wpdb->get_results($wpdb->prepare("SELECT r.url, SUM(s.visitors) as visitors, SUM(s.pageviews) as pageviews FROM $table_ref s JOIN $table_ref_urls r ON s.id = r.id WHERE s.date >= %s GROUP BY s.id ORDER BY visitors DESC LIMIT 6", $week_ago), ARRAY_A);
+                $result['top_referrers'] = $refs ?: [];
+            }
+
+            return rest_ensure_response($result);
+        },
+        'permission_callback' => function() { return current_user_can('manage_options'); },
+    ]);
+}
+add_action('rest_api_init', 'djurbant_register_analytics_api');
 function djurbant_maybe_remove_kadence_wrappers() {
     $page_template = get_page_template_slug();
     if ($page_template && strpos($page_template, 'page-templates/') === 0) {
