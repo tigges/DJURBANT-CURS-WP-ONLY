@@ -690,6 +690,7 @@ initAuth();
       btn.onclick = function(e) {
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation();
         var tab = btn.dataset.pageTab;
         document.querySelectorAll('.admin-page-tab').forEach(function(b) {
           var isActive = b.dataset.pageTab === tab;
@@ -700,14 +701,14 @@ initAuth();
         document.querySelectorAll('[data-page-panel]').forEach(function(p) {
           p.hidden = p.dataset.pagePanel !== tab;
         });
+        return false;
       };
     });
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPageTabs);
-  } else {
-    initPageTabs();
-  }
+  // Run immediately AND after a delay (in case openApp re-renders the DOM)
+  initPageTabs();
+  setTimeout(initPageTabs, 500);
+  setTimeout(initPageTabs, 1500);
 })();
 
 /* ── Real data integration (WordPress REST API) ── */
@@ -835,79 +836,70 @@ initAuth();
     })
     .catch(() => {});
 
-  /* ── Analytics: fetch Koko Analytics data ── */
-  fetch(cfg.restBase + '/analytics', { headers })
-    .then(r => r.json())
-    .then(data => {
-      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-      set('ana-today-visitors', data.today_visitors || '0');
-      set('ana-week-views', data.week || '0');
-      set('ana-week-visitors', data.week_visitors || '0');
-      set('ana-month-views', data.month || '0');
+  /* ── Analytics: cached + background refresh ── */
+  var ANA_CACHE_KEY = 'djurbant_analytics_cache';
 
-      // Update Admin Home stat cards with real data
-      const homeVisits = document.querySelector('[data-view-panel="home"] .admin-stat-value');
-      if (homeVisits && homeVisits.textContent === '142') homeVisits.textContent = String(data.today_visitors || 0);
-      const allStatValues = document.querySelectorAll('.admin-stat-value');
-      allStatValues.forEach(el => {
-        if (el.textContent === '892' && el.closest('[data-view-panel="home"]')) el.textContent = String(data.week || 0);
+  function applyAnalytics(data) {
+    var set = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = String(val); };
+    set('ana-today-visitors', data.today_visitors || 0);
+    set('ana-week-views', data.week || 0);
+    set('ana-week-visitors', data.week_visitors || 0);
+    set('ana-month-views', data.month || 0);
+
+    var homeVisits = document.querySelector('[data-view-panel="home"] .admin-stat-value');
+    if (homeVisits && homeVisits.textContent === '142') homeVisits.textContent = String(data.today_visitors || 0);
+
+    var chart = document.getElementById('analytics-chart');
+    if (chart && data.daily && data.daily.length > 0) {
+      var maxV = Math.max.apply(null, data.daily.map(function(d) { return d.visitors || 0; }).concat([1]));
+      chart.innerHTML = '';
+      chart.style.cssText = 'height:180px;display:flex;align-items:flex-end;gap:2px;padding:0.5rem 0';
+      data.daily.forEach(function(d) {
+        var bar = document.createElement('div');
+        var h = Math.max(4, ((d.visitors || 0) / maxV) * 160);
+        bar.style.cssText = 'flex:1;height:' + h + 'px;background:linear-gradient(180deg,#00c8ff,#7b5cf0);border-radius:3px 3px 0 0;min-width:3px';
+        bar.title = d.date + ': ' + (d.visitors || 0) + ' visitors, ' + (d.pageviews || 0) + ' views';
+        chart.appendChild(bar);
       });
+    } else if (chart) {
+      chart.innerHTML = '<p style="color:var(--admin-muted);font-size:0.85rem">No data yet — stats appear after visitors arrive.</p>';
+    }
 
-      // Chart
-      const chart = document.getElementById('analytics-chart');
-      if (chart && data.daily && data.daily.length > 0) {
-        const maxViews = Math.max(...data.daily.map(d => d.visitors || 0), 1);
-        chart.innerHTML = '';
-        chart.style.display = 'flex';
-        chart.style.alignItems = 'flex-end';
-        chart.style.gap = '2px';
-        data.daily.forEach(d => {
-          const bar = document.createElement('div');
-          const h = Math.max(4, ((d.visitors || 0) / maxViews) * 160);
-          bar.style.cssText = 'flex:1;height:' + h + 'px;background:linear-gradient(180deg,#00c8ff,#7b5cf0);border-radius:3px 3px 0 0;min-width:3px;transition:opacity 0.15s';
-          bar.title = d.date + ': ' + (d.visitors || 0) + ' visitors, ' + (d.pageviews || 0) + ' views';
-          bar.addEventListener('mouseenter', () => bar.style.opacity = '0.7');
-          bar.addEventListener('mouseleave', () => bar.style.opacity = '1');
-          chart.appendChild(bar);
-        });
-      } else if (chart) {
-        chart.innerHTML = '<p style="color:var(--admin-muted);font-size:0.85rem">No data yet — stats will appear after visitors arrive. Check back tomorrow.</p>';
-      }
+    var pagesUl = document.getElementById('analytics-top-pages');
+    if (pagesUl && data.top_pages) {
+      pagesUl.innerHTML = data.top_pages.length === 0 ? '<li style="color:var(--admin-muted)">No page data yet</li>' : '';
+      data.top_pages.forEach(function(p, i) {
+        var li = document.createElement('li');
+        li.innerHTML = (i+1) + '. <a href="' + (p.url||'#') + '" target="_blank" style="color:var(--admin-text)">' + (p.title||'—') + '</a><span style="float:right;color:var(--admin-muted)">' + (p.pageviews||0) + '</span>';
+        pagesUl.appendChild(li);
+      });
+    }
 
-      // Top pages
-      const pagesUl = document.getElementById('analytics-top-pages');
-      if (pagesUl && data.top_pages) {
-        pagesUl.innerHTML = '';
-        if (data.top_pages.length === 0) {
-          pagesUl.innerHTML = '<li style="color:var(--admin-muted)">No page data yet</li>';
-        } else {
-          data.top_pages.forEach((p, i) => {
-            const li = document.createElement('li');
-            li.innerHTML = '<span style="color:var(--admin-muted);margin-right:0.4rem">' + (i+1) + '.</span>'
-              + '<a href="' + (p.url || '#') + '" target="_blank" style="color:var(--admin-text)">' + (p.title || '—') + '</a>'
-              + ' <span style="float:right;color:var(--admin-muted)">' + (p.pageviews || 0) + ' views</span>';
-            pagesUl.appendChild(li);
-          });
-        }
-      }
+    var refsUl = document.getElementById('analytics-referrers');
+    if (refsUl && data.top_referrers) {
+      refsUl.innerHTML = data.top_referrers.length === 0 ? '<li style="color:var(--admin-muted)">No referrer data yet</li>' : '';
+      data.top_referrers.forEach(function(r, i) {
+        var li = document.createElement('li');
+        var domain = 'Direct';
+        try { domain = r.url ? new URL(r.url).hostname.replace('www.','') : 'Direct'; } catch(e) {}
+        li.innerHTML = (i+1) + '. ' + domain + '<span style="float:right;color:var(--admin-muted)">' + (r.visitors||0) + '</span>';
+        refsUl.appendChild(li);
+      });
+    }
+  }
 
-      // Referrers
-      const refsUl = document.getElementById('analytics-referrers');
-      if (refsUl && data.top_referrers) {
-        refsUl.innerHTML = '';
-        if (data.top_referrers.length === 0) {
-          refsUl.innerHTML = '<li style="color:var(--admin-muted)">No referrer data yet</li>';
-        } else {
-          data.top_referrers.forEach((r, i) => {
-            const li = document.createElement('li');
-            const domain = r.url ? new URL(r.url).hostname.replace('www.','') : r.url;
-            li.innerHTML = '<span style="color:var(--admin-muted);margin-right:0.4rem">' + (i+1) + '.</span>'
-              + '<span style="color:var(--admin-text)">' + (domain || 'Direct') + '</span>'
-              + ' <span style="float:right;color:var(--admin-muted)">' + (r.visitors || 0) + ' visitors</span>';
-            refsUl.appendChild(li);
-          });
-        }
-      }
+  // Load from cache instantly
+  try {
+    var cached = JSON.parse(localStorage.getItem(ANA_CACHE_KEY) || 'null');
+    if (cached && cached.data) applyAnalytics(cached.data);
+  } catch(e) {}
+
+  // Refresh from API in background
+  fetch(cfg.restBase + '/analytics', { headers })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      applyAnalytics(data);
+      try { localStorage.setItem(ANA_CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() })); } catch(e) {}
     })
-    .catch(() => {});
+    .catch(function() {});
 })();
