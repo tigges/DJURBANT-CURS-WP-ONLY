@@ -15,30 +15,41 @@ defined('ABSPATH') || exit;
  */
 function djurbant_enqueue_assets() {
     $theme_uri = get_stylesheet_directory_uri();
+    $page_template = get_page_template_slug();
 
-    // Always load the original djurbant styles
-    wp_enqueue_style(
-        'djurbant-main',
-        $theme_uri . '/djurbant-styles.css',
-        [],
-        '1.0.0'
-    );
+    $is_admin_or_map = in_array($page_template, [
+        'page-templates/admin.php',
+        'page-templates/map.php',
+    ], true);
 
-    // WP overrides: hide WP admin bar offset, fix z-index conflicts
+    if (!$is_admin_or_map) {
+        wp_enqueue_style(
+            'djurbant-main',
+            $theme_uri . '/djurbant-styles.css',
+            [],
+            '1.0.0'
+        );
+    }
+
     wp_enqueue_style(
         'djurbant-wp-overrides',
         $theme_uri . '/wp-overrides.css',
-        ['djurbant-main'],
+        $is_admin_or_map ? [] : ['djurbant-main'],
         '1.0.0'
     );
 }
 add_action('wp_enqueue_scripts', 'djurbant_enqueue_assets', 20);
 
 /**
- * Enqueue the original JS files in footer
+ * Enqueue the original JS files in footer (skip on admin/map pages)
  */
 function djurbant_enqueue_scripts() {
     $theme_uri = get_stylesheet_directory_uri();
+    $page_template = get_page_template_slug();
+
+    if (in_array($page_template, ['page-templates/admin.php', 'page-templates/map.php'], true)) {
+        return;
+    }
 
     wp_enqueue_script(
         'djurbant-cms-content',

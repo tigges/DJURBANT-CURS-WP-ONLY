@@ -1,9 +1,9 @@
 :root {
-  --color-bg: #000000;
-  --color-surface: #13162a;
-  --color-border: #252840;
-  --color-type: #f5f0e8;
-  --color-type-muted: rgba(245, 240, 232, 0.55);
+  --color-bg: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-border: #e2e4ea;
+  --color-type: #1a1c2b;
+  --color-type-muted: rgba(26, 28, 43, 0.55);
   --gradient: linear-gradient(90deg, #00c8ff 0%, #7b5cf0 35%, #f43f8e 60%, #ff8c00 80%, #ffd700 100%);
   --gradient-diagonal: linear-gradient(
     135deg,
@@ -20,12 +20,12 @@
   --admin-text: var(--color-type);
   --admin-muted: var(--color-type-muted);
   --admin-accent: #ff3d6b;
-  --admin-amber: #ffb800;
-  --admin-green-up: #3b6d11;
+  --admin-amber: #e6a600;
+  --admin-green-up: #2d8a0e;
   --admin-transition: 0.15s ease;
   --admin-sidebar-width: 200px;
   --admin-topbar-height: 52px;
-  --color-surface-outer: #000000;
+  --color-surface-outer: #ecedf1;
 }
 
 *,

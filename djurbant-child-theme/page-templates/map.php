@@ -19,13 +19,13 @@ $theme_uri = get_stylesheet_directory_uri();
     <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $theme_uri; ?>/assets/images/apple-touch-icon.png" />
     <style>
       :root {
-        --map-bg: #0a0c14;
-        --map-surface: #12151f;
-        --map-border: rgba(255,255,255,0.10);
-        --map-text: #e2e6ef;
-        --map-muted: #8a90a2;
-        --map-accent: #22bfff;
-        --map-accent-soft: rgba(34,191,255,0.18);
+        --map-bg: #f5f5f7;
+        --map-surface: #ffffff;
+        --map-border: #e2e4ea;
+        --map-text: #1a1c2b;
+        --map-muted: #6b7085;
+        --map-accent: #0078d4;
+        --map-accent-soft: rgba(0,120,212,0.12);
         --map-radius: 12px;
       }
       body[data-page="map"] { margin: 0; background: var(--map-bg); color: var(--map-text); font-family: "Syne", system-ui, -apple-system, sans-serif; }
@@ -47,8 +47,8 @@ $theme_uri = get_stylesheet_directory_uri();
       .map-routes td a { color: var(--map-accent); text-decoration: none; }
       .map-routes td a:hover { text-decoration: underline; }
       .status { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.18rem 0.55rem; border-radius: 999px; }
-      .status-open { background: rgba(75,229,72,0.16); color: #4be548; }
-      .status-locked { background: rgba(255,93,87,0.14); color: #ff5d57; }
+      .status-open { background: rgba(46,160,67,0.12); color: #1a7f37; border: 1px solid rgba(46,160,67,0.3); }
+      .status-locked { background: rgba(207,34,46,0.1); color: #cf222e; border: 1px solid rgba(207,34,46,0.3); }
       @media (max-width: 768px) {
         .map-grid { grid-template-columns: repeat(2, 1fr); }
       }
