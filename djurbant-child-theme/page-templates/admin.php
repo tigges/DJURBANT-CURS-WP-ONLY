@@ -339,9 +339,9 @@ function djurbant_get_nested($arr, $path) {
 
                 <div>
                   <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview</h3>
-                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000">
-                    <iframe src="<?php echo home_url('/'); ?>" style="width:200%;height:900px;transform:scale(0.5);transform-origin:top left;pointer-events:none;display:block;border:0" title="Live site preview"></iframe>
-                    <div style="position:absolute;top:0;left:0;width:50%;height:450px;pointer-events:none">
+                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000;height:420px">
+                    <iframe src="<?php echo home_url('/'); ?>" style="width:200%;height:840px;transform:scale(0.5);transform-origin:top left;pointer-events:none;display:block;border:0" title="Live site preview"></iframe>
+                    <div style="position:absolute;top:0;left:0;width:50%;height:420px;pointer-events:none">
                       <span style="position:absolute;top:48%;left:28%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">1</span>
                       <span style="position:absolute;top:62%;left:10%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">2</span>
                       <span style="position:absolute;top:87%;left:8%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">3</span>
