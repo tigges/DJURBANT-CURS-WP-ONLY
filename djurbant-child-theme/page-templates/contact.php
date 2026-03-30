@@ -18,10 +18,9 @@ $theme_uri = get_stylesheet_directory_uri();
     <link rel="icon" type="image/png" sizes="16x16" href="<?php echo $theme_uri; ?>/assets/images/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $theme_uri; ?>/assets/images/apple-touch-icon.png" />
     <style>
-      body[data-page="contact"] .media-section { padding-top: var(--space-3); margin-top: var(--space-4); }
-      body[data-page="contact"] .media-section { position: relative; border-top: 1px solid rgba(255,255,255,0.14); border-bottom: 1px solid rgba(255,255,255,0.14); background: rgba(5,6,11,0.86); padding: clamp(1rem,2.8vw,1.8rem) clamp(1rem,3vw,2.2rem); }
+      body[data-page="contact"] .media-section { position: relative; border-top: 1px solid rgba(255,255,255,0.14); border-bottom: 1px solid rgba(255,255,255,0.14); background: #000; padding: clamp(1.5rem,3vw,2.5rem) clamp(1rem,3vw,2.2rem); margin-top: 0; }
       body[data-page="contact"] .media-section::before { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:var(--rainbow-divider-gradient); pointer-events:none; }
-      /* WPForms dark theme overrides */
+      body[data-page="contact"] .subpage-main { background: #000; padding-top: 0; }
       .wpforms-container { background: transparent !important; }
       .wpforms-form .wpforms-field-label { color: rgba(220,226,240,0.85) !important; font-family: "Syne",sans-serif !important; font-weight: 500 !important; }
       .wpforms-form input[type="text"], .wpforms-form input[type="email"], .wpforms-form input[type="tel"], .wpforms-form input[type="date"], .wpforms-form input[type="url"], .wpforms-form textarea, .wpforms-form select { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.18) !important; color: #f1f1f1 !important; border-radius: 8px !important; padding: 0.7rem 0.85rem !important; font-family: "Syne",sans-serif !important; }
@@ -39,7 +38,7 @@ $theme_uri = get_stylesheet_directory_uri();
         <img class="brand-logo" src="<?php echo $theme_uri; ?>/assets/images/UT_TITLE_SVG.svg" alt="DJ UrbanT" />
       </a>
       <nav class="main-nav" aria-label="Main navigation">
-        <a class="main-nav-book is-active" href="<?php echo home_url('/contact/'); ?>">Contact</a>
+        <a class="main-nav-book" href="<?php echo home_url('/'); ?>">Home</a>
       </nav>
     </header>
 
@@ -51,19 +50,17 @@ $theme_uri = get_stylesheet_directory_uri();
         <p class="subpage-intro" data-cms-text="page.introText">Use this form for bookings, event inquiries, collaborations, and press.</p>
         <p class="subpage-intro">We usually reply within 24 hours.</p>
 
-        <form class="contact-form" action="mailto:booking@djurbant.com" method="post" enctype="text/plain" data-cms-action="page.formAction">
-          <?php
-          if (function_exists('wpforms_display')) {
-              wpforms_display(54, true, true);
-          } else {
-              echo do_shortcode('[wpforms id="54"]');
-          }
-          ?>
+        <?php
+        if (function_exists('wpforms_display')) {
+            wpforms_display(54, true, true);
+        } else {
+            echo do_shortcode('[wpforms id="54"]');
+        }
+        ?>
 
-          <div class="section-cta" style="margin-top:1.5rem;">
-            <a class="btn btn-outline" href="<?php echo home_url('/'); ?>" data-cms-text="page.backButtonLabel">Back Home</a>
-          </div>
-        </form>
+        <div class="section-cta" style="margin-top:1.5rem;">
+          <a class="btn btn-outline" href="<?php echo home_url('/'); ?>" data-cms-text="page.backButtonLabel">Back Home</a>
+        </div>
       </section>
     </main>
 
