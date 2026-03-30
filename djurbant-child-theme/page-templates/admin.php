@@ -89,6 +89,10 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
               <span class="admin-nav-icon">⌕</span><span>Bookings</span>
               <span id="bookings-unread-badge" class="admin-badge admin-badge-danger">0</span>
             </button>
+            <p class="admin-nav-group-label">Reference</p>
+            <button class="admin-nav-item" type="button" data-view="management">
+              <span class="admin-nav-icon">☰</span><span>Management</span>
+            </button>
           </nav>
         </aside>
 
@@ -306,6 +310,107 @@ if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 
               <div class="admin-inline-actions">
                 <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('options-general.php'); ?>" target="_blank">WordPress Settings</a>
                 <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('customize.php'); ?>" target="_blank">Theme Customizer</a>
+              </div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="management" hidden>
+            <div class="admin-view-head">
+              <h1>Complete Management Reference</h1>
+              <p>Direct links to manage every aspect of the DJ UrbanT site.</p>
+            </div>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Content (text, videos, audio data)</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>What</th><th>Where</th><th>Direct Link</th><th>How</th></tr></thead>
+                  <tbody>
+                    <tr><td>Hero tagline, CTA text, booking band text</td><td><code>site-content.json</code> in theme</td><td><a href="<?php echo admin_url('theme-editor.php?file=site-content.json&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit JSON fields directly</td></tr>
+                    <tr><td>YouTube/Mixcloud feed data</td><td><code>media-data.json</code> in theme</td><td><a href="<?php echo admin_url('theme-editor.php?file=media-data.json&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit JSON — or auto-generate from APIs</td></tr>
+                    <tr><td>Social links (URLs, platforms, visibility)</td><td><code>site-content.json</code> → <code>global.socialLinks</code></td><td><a href="<?php echo admin_url('theme-editor.php?file=site-content.json&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Also via REST API: <code>/wp-json/djurbant/v1/socials</code></td></tr>
+                    <tr><td>Page titles, slugs, publish status</td><td>WordPress Pages</td><td><a href="<?php echo admin_url('edit.php?post_type=page'); ?>" target="_blank">Pages list</a></td><td>Standard WP page management</td></tr>
+                    <tr><td>Booking form fields</td><td>WPForms Builder</td><td><a href="<?php echo admin_url('admin.php?page=wpforms-builder&view=fields&form_id=54'); ?>" target="_blank">Edit Form 54</a></td><td>Visual drag-and-drop</td></tr>
+                    <tr><td>Booking submissions / inbox</td><td>WPForms Entries</td><td><a href="<?php echo admin_url('admin.php?page=wpforms-entries&view=list&form_id=54'); ?>" target="_blank">View Entries</a></td><td>Read, star, export</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Design (colors, fonts, spacing)</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>What</th><th>Where</th><th>Direct Link</th><th>How</th></tr></thead>
+                  <tbody>
+                    <tr><td>Global colors (brand cyan, violet, gradients)</td><td>CSS variables in <code>djurbant-styles.css</code></td><td><a href="<?php echo admin_url('theme-editor.php?file=djurbant-styles.css&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit <code>:root</code> variables at the top</td></tr>
+                    <tr><td>Fonts</td><td>Font files + <code>functions.php</code></td><td><a href="<?php echo admin_url('theme-editor.php?file=functions.php&theme=djurbant-child'); ?>" target="_blank">functions.php</a></td><td>Replace TTF files in <code>assets/fonts/</code>, update <code>@font-face</code></td></tr>
+                    <tr><td>Quick CSS tweaks</td><td>Customizer Additional CSS</td><td><a href="<?php echo admin_url('customize.php?autofocus[section]=custom_css'); ?>" target="_blank">Additional CSS</a></td><td>Override any style without touching theme files</td></tr>
+                    <tr><td>Admin page colors</td><td><code>admin.css</code> variables</td><td><a href="<?php echo admin_url('theme-editor.php?file=admin.css&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit <code>:root</code> at top</td></tr>
+                    <tr><td>Kadence global styles (fallback pages)</td><td>Kadence Customizer</td><td><a href="<?php echo admin_url('customize.php?autofocus[section]=kadence_customizer_general_colors'); ?>" target="_blank">Colors &amp; Fonts</a></td><td>For pages not using custom templates</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Layout &amp; Structure</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>What</th><th>Where</th><th>Direct Link</th><th>How</th></tr></thead>
+                  <tbody>
+                    <tr><td>Homepage structure (hero, carousel, stats, CTA)</td><td><code>page-templates/home.php</code></td><td><a href="<?php echo admin_url('theme-editor.php?file=page-templates/home.php&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit HTML/PHP directly</td></tr>
+                    <tr><td>Video page layout</td><td><code>page-templates/video.php</code></td><td><a href="<?php echo admin_url('theme-editor.php?file=page-templates/video.php&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit HTML</td></tr>
+                    <tr><td>Contact page layout</td><td><code>page-templates/contact.php</code></td><td><a href="<?php echo admin_url('theme-editor.php?file=page-templates/contact.php&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit HTML</td></tr>
+                    <tr><td>Footer (social icons, logo)</td><td><code>footer-djurbant.php</code></td><td><a href="<?php echo admin_url('theme-editor.php?file=footer-djurbant.php&theme=djurbant-child'); ?>" target="_blank">Theme File Editor</a></td><td>Edit HTML/SVG icons</td></tr>
+                    <tr><td>Navigation menu items</td><td>Hardcoded in templates</td><td>Each template's <code>&lt;header&gt;</code> section</td><td>Edit the <code>&lt;nav&gt;</code> HTML in each template</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Media &amp; Assets</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>What</th><th>Where</th><th>Direct Link</th><th>How</th></tr></thead>
+                  <tbody>
+                    <tr><td>Logo SVG</td><td><code>assets/images/UT_TITLE_SVG.svg</code></td><td>Theme directory on server</td><td>Replace file via SFTP or Git</td></tr>
+                    <tr><td>Diamond image</td><td><code>assets/images/djurbant-proto-1.png</code></td><td>Theme directory</td><td>Replace file</td></tr>
+                    <tr><td>Favicons</td><td><code>assets/images/favicon*</code></td><td>Theme directory</td><td>Replace files</td></tr>
+                    <tr><td>WordPress media library</td><td>WP Media</td><td><a href="<?php echo admin_url('upload.php'); ?>" target="_blank">Media Library</a></td><td>Upload/manage images</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Features &amp; Plugins</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>What</th><th>Where</th><th>Direct Link</th><th>How</th></tr></thead>
+                  <tbody>
+                    <tr><td>Caching (Breeze)</td><td>Breeze Settings</td><td><a href="<?php echo admin_url('options-general.php?page=breeze'); ?>" target="_blank">Breeze</a></td><td>Purge cache after changes</td></tr>
+                    <tr><td>WPForms (contact form)</td><td>WPForms</td><td><a href="<?php echo admin_url('admin.php?page=wpforms-overview'); ?>" target="_blank">All Forms</a></td><td>Manage forms</td></tr>
+                    <tr><td>Kadence Blocks</td><td>Kadence</td><td><a href="<?php echo admin_url('admin.php?page=kadence-blocks'); ?>" target="_blank">Kadence Settings</a></td><td>Block settings</td></tr>
+                    <tr><td>All plugins</td><td>Plugins page</td><td><a href="<?php echo admin_url('plugins.php'); ?>" target="_blank">Plugins</a></td><td>Enable/disable</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Site Settings</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>What</th><th>Where</th><th>Direct Link</th><th>How</th></tr></thead>
+                  <tbody>
+                    <tr><td>Site title &amp; tagline</td><td>General Settings</td><td><a href="<?php echo admin_url('options-general.php'); ?>" target="_blank">General</a></td><td>Edit title, tagline, timezone</td></tr>
+                    <tr><td>Homepage setting (which page is front page)</td><td>Reading Settings</td><td><a href="<?php echo admin_url('options-reading.php'); ?>" target="_blank">Reading</a></td><td>Set static page</td></tr>
+                    <tr><td>Permalinks</td><td>Permalink Settings</td><td><a href="<?php echo admin_url('options-permalink.php'); ?>" target="_blank">Permalinks</a></td><td>URL structure</td></tr>
+                    <tr><td>Users &amp; roles</td><td>Users</td><td><a href="<?php echo admin_url('users.php'); ?>" target="_blank">Users</a></td><td>Manage access</td></tr>
+                  </tbody>
+                </table>
               </div>
             </section>
           </section>
