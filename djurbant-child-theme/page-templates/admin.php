@@ -343,12 +343,17 @@ function djurbant_get_nested($arr, $path) {
               <div class="admin-block-head"><h2>All Pages</h2></div>
               <div class="admin-table-wrap">
                 <table class="admin-table">
-                  <thead><tr><th>Page</th><th>Template</th><th>Status</th><th>Actions</th></tr></thead>
+                  <thead><tr><th style="width:62px"></th><th>Page</th><th>Template</th><th>Status</th><th>Actions</th></tr></thead>
                   <tbody>
-                    <?php foreach ($pages as $p):
+                    <?php
+                    $thumb_map_pages = ['DJ UrbanT' => 'home', 'Video' => 'video', 'Audio' => 'audio', 'Contact' => 'contact', 'Map' => 'map', 'Admin' => 'admin'];
+                    foreach ($pages as $p):
                       $tmpl = get_page_template_slug($p->ID) ?: 'default';
+                      $tk = $thumb_map_pages[$p->post_title] ?? '';
+                      $tsrc = $tk ? $theme_uri . '/assets/images/thumb-' . $tk . '.png' : '';
                     ?>
                     <tr>
+                      <td><?php if ($tsrc): ?><a href="<?php echo get_permalink($p->ID); ?>" target="_blank"><img src="<?php echo $tsrc; ?>" alt="" style="width:56px;height:42px;object-fit:cover;border-radius:4px;border:1px solid var(--admin-border)" /></a><?php endif; ?></td>
                       <td><strong><?php echo esc_html($p->post_title); ?></strong></td>
                       <td><code style="font-size:0.78rem"><?php echo esc_html(str_replace('page-templates/', '', $tmpl)); ?></code></td>
                       <td><?php echo $p->post_status === 'publish' ? '<span style="color:#1a7f37">Published</span>' : esc_html(ucfirst($p->post_status)); ?></td>

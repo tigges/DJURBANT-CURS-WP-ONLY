@@ -36,7 +36,7 @@ $theme_uri = get_stylesheet_directory_uri();
       .map-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
       .map-card { background: var(--map-surface); border: 1px solid var(--map-border); border-radius: var(--map-radius); overflow: hidden; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
       .map-card:hover { border-color: var(--map-accent); box-shadow: 0 0 0 1px var(--map-accent-soft), 0 8px 24px rgba(0,0,0,0.35); }
-      .map-card-preview { width: 100%; aspect-ratio: 16/10; border: none; pointer-events: none; background: var(--map-bg); }
+      .map-card-preview { width: 100%; aspect-ratio: 4/3; border: none; border-radius: 8px 8px 0 0; object-fit: cover; display: block; background: var(--map-bg); }
       .map-card-body { padding: 0.75rem 1rem; }
       .map-card-title { margin: 0 0 0.25rem; font-size: 0.95rem; font-weight: 600; }
       .map-card-url { margin: 0; font-size: 0.78rem; color: var(--map-muted); word-break: break-all; }
@@ -68,28 +68,28 @@ $theme_uri = get_stylesheet_directory_uri();
       <h2>Layer 1 &mdash; Key Pages</h2>
       <div class="map-grid">
         <a class="map-card" href="<?php echo home_url('/'); ?>">
-          <iframe class="map-card-preview" src="<?php echo home_url('/'); ?>" tabindex="-1" loading="lazy" title="Home preview"></iframe>
+          <img class="map-card-preview" src="<?php echo $theme_uri; ?>/assets/images/thumb-home.png" alt="Home" />
           <div class="map-card-body">
             <p class="map-card-title">Home</p>
             <p class="map-card-url">/</p>
           </div>
         </a>
         <a class="map-card" href="<?php echo home_url('/video/'); ?>">
-          <iframe class="map-card-preview" src="<?php echo home_url('/video/'); ?>" tabindex="-1" loading="lazy" title="Video preview"></iframe>
+          <img class="map-card-preview" src="<?php echo $theme_uri; ?>/assets/images/thumb-video.png" alt="Video" />
           <div class="map-card-body">
             <p class="map-card-title">Video</p>
             <p class="map-card-url">/video/</p>
           </div>
         </a>
         <a class="map-card" href="<?php echo home_url('/audio/'); ?>">
-          <iframe class="map-card-preview" src="<?php echo home_url('/audio/'); ?>" tabindex="-1" loading="lazy" title="Audio preview"></iframe>
+          <img class="map-card-preview" src="<?php echo $theme_uri; ?>/assets/images/thumb-audio.png" alt="Audio" />
           <div class="map-card-body">
             <p class="map-card-title">Audio</p>
             <p class="map-card-url">/audio/</p>
           </div>
         </a>
         <a class="map-card" href="<?php echo home_url('/contact/'); ?>">
-          <iframe class="map-card-preview" src="<?php echo home_url('/contact/'); ?>" tabindex="-1" loading="lazy" title="Contact preview"></iframe>
+          <img class="map-card-preview" src="<?php echo $theme_uri; ?>/assets/images/thumb-contact.png" alt="Contact" />
           <div class="map-card-body">
             <p class="map-card-title">Contact</p>
             <p class="map-card-url">/contact/</p>
@@ -100,17 +100,17 @@ $theme_uri = get_stylesheet_directory_uri();
       <h2>Layer 2 &mdash; Admin</h2>
       <div class="map-grid" style="grid-template-columns: repeat(2, 1fr);">
         <a class="map-card" href="<?php echo home_url('/map/'); ?>">
-          <iframe class="map-card-preview" src="<?php echo home_url('/map/'); ?>" tabindex="-1" loading="lazy" title="Map preview"></iframe>
+          <img class="map-card-preview" src="<?php echo $theme_uri; ?>/assets/images/thumb-map.png" alt="Map" />
           <div class="map-card-body">
             <p class="map-card-title">Map</p>
             <p class="map-card-url">/map/</p>
           </div>
         </a>
         <a class="map-card" href="<?php echo home_url('/admin/'); ?>">
-          <div class="map-card-preview" style="display:flex;align-items:center;justify-content:center;color:var(--map-muted);font-size:0.85rem;">Requires login</div>
+          <img class="map-card-preview" src="<?php echo $theme_uri; ?>/assets/images/thumb-admin.png" alt="Admin" />
           <div class="map-card-body">
             <p class="map-card-title">Admin</p>
-            <p class="map-card-url">/admin/</p>
+            <p class="map-card-url">/admin/ <span style="font-size:0.75rem;color:var(--map-muted)">(requires login)</span></p>
           </div>
         </a>
       </div>
