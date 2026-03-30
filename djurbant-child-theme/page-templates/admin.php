@@ -425,7 +425,7 @@ function djurbant_get_nested($arr, $path) {
               <p style="color:var(--admin-muted);margin:0 0 0.8rem">For deeper insights, use one of these tools:</p>
               <div class="admin-inline-actions" style="flex-wrap:wrap;gap:0.5rem">
                 <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=koko-analytics'); ?>" target="_blank">📊 Koko Analytics Dashboard</a>
-                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=googlesitekit-splash'); ?>" target="_blank" style="opacity:0.7">🔮 Google Site Kit (install later)</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=googlesitekit-splash'); ?>" target="_blank">🔮 Google Site Kit (connect Google account)</a>
                 <a class="admin-btn admin-btn-outline" href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" style="opacity:0.7">📈 Google Analytics (external)</a>
               </div>
             </section>
