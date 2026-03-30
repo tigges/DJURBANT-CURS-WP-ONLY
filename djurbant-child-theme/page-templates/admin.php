@@ -102,9 +102,6 @@ function djurbant_get_nested($arr, $path) {
             <button class="admin-nav-item" type="button" data-view="pages-contact">
               <span class="admin-nav-icon" style="opacity:0.4">▣</span><span>Pages: Contact</span>
             </button>
-            <button class="admin-nav-item" type="button" data-view="uploads">
-              <span class="admin-nav-icon">⇪</span><span>Uploads</span>
-            </button>
             <button class="admin-nav-item" type="button" data-view="socials">
               <span class="admin-nav-icon">⎔</span><span>Socials</span>
             </button>
@@ -280,15 +277,6 @@ function djurbant_get_nested($arr, $path) {
           </section>
           <?php endforeach; ?>
 
-          <section class="admin-view" data-view-panel="uploads" hidden>
-            <div class="admin-view-head"><h1>Uploads</h1><p>Media library management.</p></div>
-            <section class="admin-card admin-block">
-              <div class="admin-inline-actions">
-                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('upload.php'); ?>" target="_blank">Open Media Library</a>
-              </div>
-            </section>
-          </section>
-
           <section class="admin-view" data-view-panel="socials" hidden>
             <div class="admin-view-head"><h1>Socials</h1><p>Manage social platform links and visibility across the site.</p></div>
             <section class="admin-card admin-block">
@@ -354,6 +342,10 @@ function djurbant_get_nested($arr, $path) {
                     </div>
                   </div>
                   <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match edit fields on the left.</p>
+                  <div style="margin-top:0.8rem">
+                    <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo admin_url('upload.php'); ?>" target="_blank">Open Media Library</a>
+                    <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo admin_url('theme-editor.php?file=site-content.json&theme=djurbant-child'); ?>" target="_blank">Edit JSON directly</a>
+                  </div>
                 </div>
               </div>
             </section>
