@@ -442,7 +442,7 @@ function saveLocalJson(key, value) {
 }
 
 function applyHomeChipState() {
-  const state = loadLocalJson(HOME_TILES_KEY, { activity: true, socials: true });
+  const state = loadLocalJson(HOME_TILES_KEY, { "youtube-bookings": true, socials: true });
   homeChips.forEach((chip) => {
     const key = chip.dataset.homeChip;
     const enabled = Boolean(key && state[key]);
@@ -465,7 +465,7 @@ function bindHomeChips() {
     });
   });
   homeResetBtn?.addEventListener("click", () => {
-    const reset = { activity: true, socials: true };
+    const reset = { "youtube-bookings": true, socials: true };
     saveLocalJson(HOME_TILES_KEY, reset);
     applyHomeChipState();
   });

@@ -183,30 +183,35 @@ function djurbant_get_nested($arr, $path) {
                 <h2>Social links</h2><p>6 platforms active in navigation.</p><span class="admin-quick-link">Edit socials →</span>
               </button>
             </section>
-            <section id="home-activity-section" class="admin-card admin-block">
-              <div class="admin-block-head"><h2>Recent activity</h2></div>
-              <ul id="recent-activity-list" class="admin-activity-list"></ul>
-            </section>
+            <div id="home-youtube-bookings-section" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <section id="home-youtube-section" class="admin-card admin-block">
+                <div class="admin-block-head"><h2>YouTube Channel</h2></div>
+                <p style="color:var(--admin-muted);margin:0 0 0.8rem">DJ UrbanT channel controls and live shortcuts.</p>
+                <div class="admin-inline-actions">
+                  <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">Open YouTube Studio</a>
+                  <a class="admin-btn admin-btn-outline" href="https://www.youtube.com/@djurbant/live" target="_blank" rel="noopener noreferrer">View Live</a>
+                </div>
+              </section>
+              <section id="home-bookings-section" class="admin-card admin-block">
+                <div class="admin-block-head"><h2>Bookings</h2></div>
+                <p style="color:var(--admin-muted);margin:0 0 0.8rem">Inbox and routing controls.</p>
+                <div class="admin-inline-actions">
+                  <button class="admin-btn admin-btn-outline" type="button" data-open-view="bookings">Open bookings</button>
+                  <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=wpforms-entries&view=list&form_id=54'); ?>" target="_blank">View in WP Admin</a>
+                </div>
+              </section>
+            </div>
             <section id="home-socials-section" class="admin-card admin-block">
-              <div class="admin-block-head"><h2>Social links management</h2>
-                <button id="add-platform-btn" class="admin-btn admin-btn-outline" type="button">Add platform</button>
-              </div>
+              <div class="admin-block-head"><h2>Social links</h2></div>
               <div class="admin-table-wrap">
-                <table class="admin-table"><thead><tr><th>Platform</th><th>URL</th><th>In nav</th><th>Order</th></tr></thead>
+                <table class="admin-table"><thead><tr><th>Platform</th><th>URL</th><th>In nav</th></tr></thead>
                 <tbody id="social-links-table-body"></tbody></table>
               </div>
-              <form id="add-platform-form" class="admin-inline-form" hidden>
-                <input id="add-platform-name" type="text" placeholder="Platform name" />
-                <input id="add-platform-url" type="url" placeholder="https://example.com" />
-                <label class="admin-checkbox"><input id="add-platform-in-nav" type="checkbox" checked /><span>In nav</span></label>
-                <button class="admin-btn admin-btn-solid" type="submit">Add</button>
-                <button id="cancel-platform-btn" class="admin-btn admin-btn-outline" type="button">Cancel</button>
-              </form>
             </section>
             <section class="admin-card admin-customize" aria-label="Customise this page">
               <div class="admin-customize-left">✎ Customise this page</div>
               <div class="admin-customize-chips">
-                <button class="admin-chip is-on" type="button" data-home-chip="activity">Activity</button>
+                <button class="admin-chip is-on" type="button" data-home-chip="youtube-bookings">YouTube &amp; Bookings</button>
                 <button class="admin-chip is-on" type="button" data-home-chip="socials">Socials</button>
               </div>
               <button id="home-customize-reset" class="admin-reset-btn" type="button">Reset</button>
