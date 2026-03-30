@@ -114,10 +114,6 @@ function djurbant_get_nested($arr, $path) {
             <button class="admin-nav-item" type="button" data-view="content">
               <span class="admin-nav-icon">✎</span><span>Content</span>
             </button>
-            <button class="admin-nav-item" type="button" data-view="youtube">
-              <span class="admin-nav-icon">▶</span><span>YouTube</span>
-              <span id="youtube-live-badge" class="admin-badge admin-badge-amber">Live</span>
-            </button>
             <button class="admin-nav-item" type="button" data-view="bookings">
               <span class="admin-nav-icon">⌕</span><span>Bookings</span>
               <span id="bookings-unread-badge" class="admin-badge admin-badge-danger">0</span>
@@ -326,6 +322,12 @@ function djurbant_get_nested($arr, $path) {
                     <?php if ($tab_key === 'contact'): ?>
                     <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo admin_url('admin.php?page=wpforms-builder&view=fields&form_id=54'); ?>" target="_blank">Edit form fields</a>
                     <?php endif; ?>
+                    <?php if (!empty($tab['extra_links'])): foreach ($tab['extra_links'] as $el):
+                      $el_url = $el['url'];
+                      if (strpos($el_url, 'THEME_EDITOR:') === 0) $el_url = admin_url('theme-editor.php?file=' . substr($el_url, 13) . '&theme=djurbant-child');
+                    ?>
+                    <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo esc_url($el_url); ?>" target="_blank"<?php echo !empty($el['external']) ? ' rel="noopener noreferrer"' : ''; ?>><?php echo esc_html($el['label']); ?></a>
+                    <?php endforeach; endif; ?>
                   </div>
                 </div>
                 <div>
@@ -419,16 +421,6 @@ function djurbant_get_nested($arr, $path) {
                   </div>
                   <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match edit fields on the left.</p>
                 </div>
-              </div>
-            </section>
-          </section>
-
-          <section class="admin-view" data-view-panel="youtube" hidden>
-            <div class="admin-view-head"><h1>YouTube</h1><p>YouTube channel management.</p></div>
-            <section class="admin-card admin-block">
-              <div class="admin-inline-actions">
-                <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">Open YouTube Studio</a>
-                <a class="admin-btn admin-btn-outline" href="https://www.youtube.com/@DJ_UrbanT" target="_blank" rel="noopener noreferrer">View Channel</a>
               </div>
             </section>
           </section>

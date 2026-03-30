@@ -22,6 +22,11 @@ $page_tabs = [
         'url' => home_url('/video/'),
         'template' => 'page-templates/video.php',
         'preview' => 'video-preview.png',
+        'extra_links' => [
+            ['label' => 'Open YouTube Studio', 'url' => 'https://studio.youtube.com', 'external' => true],
+            ['label' => 'View Channel', 'url' => 'https://www.youtube.com/@DJ_UrbanT', 'external' => true],
+            ['label' => 'Edit media-data.json', 'url' => 'THEME_EDITOR:media-data.json', 'external' => false],
+        ],
         'sections' => [
             ['num' => 1, 'name' => 'Header', 'desc' => 'Logo + Contact nav link', 'pos' => 'top:1%;left:2%'],
             ['num' => 2, 'name' => 'Page Title', 'desc' => '"Video" heading + intro text', 'pos' => 'top:12%;left:5%'],
