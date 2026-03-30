@@ -111,6 +111,9 @@ function djurbant_get_nested($arr, $path) {
             <button class="admin-nav-item" type="button" data-view="socials">
               <span class="admin-nav-icon">⎔</span><span>Socials</span>
             </button>
+            <button class="admin-nav-item" type="button" data-view="content">
+              <span class="admin-nav-icon">✎</span><span>Content</span>
+            </button>
             <button class="admin-nav-item" type="button" data-view="youtube">
               <span class="admin-nav-icon">▶</span><span>YouTube</span>
               <span id="youtube-live-badge" class="admin-badge admin-badge-amber">Live</span>
@@ -351,8 +354,32 @@ function djurbant_get_nested($arr, $path) {
           </section>
 
           <section class="admin-view" data-view-panel="socials" hidden>
-            <div class="admin-view-head"><h1>Content &amp; Socials</h1><p>Edit site text and social links. Preview shows where each field appears on the live site.</p></div>
+            <div class="admin-view-head"><h1>Socials</h1><p>Manage social platform links and visibility across the site.</p></div>
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Social Links</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>Platform</th><th>URL</th><th>Enabled</th></tr></thead>
+                  <tbody id="real-socials-tbody">
+                    <?php foreach ($socials as $key => $s): ?>
+                    <tr>
+                      <td><strong><?php echo esc_html($s['label'] ?? $key); ?></strong></td>
+                      <td><input type="url" class="socials-url-input" data-key="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($s['url'] ?? ''); ?>" style="width:100%;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.35rem 0.5rem;font-size:0.85rem" /></td>
+                      <td><label style="cursor:pointer"><input type="checkbox" class="socials-enabled-input" data-key="<?php echo esc_attr($key); ?>"<?php echo ($s['enabled'] !== false) ? ' checked' : ''; ?> /> On</label></td>
+                    </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
+                <button id="save-socials-btn" class="admin-btn admin-btn-solid" type="button">Save social links</button>
+                <span id="socials-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>
+              </div>
+            </section>
+          </section>
 
+          <section class="admin-view" data-view-panel="content" hidden>
+            <div class="admin-view-head"><h1>Content</h1><p>Edit site text content. Changes update the live site after saving.</p></div>
             <section class="admin-card admin-block">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
                 <div>
@@ -378,7 +405,6 @@ function djurbant_get_nested($arr, $path) {
                     <span id="content-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>
                   </div>
                 </div>
-
                 <div>
                   <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview <span style="font-size:0.72rem;color:var(--admin-muted);font-weight:400"><?php echo date('M j'); ?></span></h3>
                   <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000;max-height:480px">
@@ -389,33 +415,10 @@ function djurbant_get_nested($arr, $path) {
                       <span style="position:absolute;top:63%;left:6%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">3</span>
                       <span style="position:absolute;top:63%;right:8%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">4</span>
                       <span style="position:absolute;top:1.5%;right:4%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">8</span>
-                      <span style="position:absolute;top:77%;left:35%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">9</span>
                     </div>
                   </div>
-                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match edit fields. <strong>⑨</strong> = Social links (footer).</p>
+                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match edit fields on the left.</p>
                 </div>
-              </div>
-            </section>
-
-            <section class="admin-card admin-block" style="margin-top:1rem">
-              <div class="admin-block-head"><h2>⑨ Social Links</h2></div>
-              <div class="admin-table-wrap">
-                <table class="admin-table">
-                  <thead><tr><th>Platform</th><th>URL</th><th>Enabled</th></tr></thead>
-                  <tbody id="real-socials-tbody">
-                    <?php foreach ($socials as $key => $s): ?>
-                    <tr>
-                      <td><strong><?php echo esc_html($s['label'] ?? $key); ?></strong></td>
-                      <td><input type="url" class="socials-url-input" data-key="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($s['url'] ?? ''); ?>" style="width:100%;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.35rem 0.5rem;font-size:0.85rem" /></td>
-                      <td><label style="cursor:pointer"><input type="checkbox" class="socials-enabled-input" data-key="<?php echo esc_attr($key); ?>"<?php echo ($s['enabled'] !== false) ? ' checked' : ''; ?> /> On</label></td>
-                    </tr>
-                    <?php endforeach; ?>
-                  </tbody>
-                </table>
-              </div>
-              <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
-                <button id="save-socials-btn" class="admin-btn admin-btn-solid" type="button">Save social links</button>
-                <span id="socials-save-status" style="font-size:0.82rem;color:var(--admin-muted)"></span>
               </div>
             </section>
           </section>
