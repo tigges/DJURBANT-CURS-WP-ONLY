@@ -126,6 +126,8 @@ function djurbant_register_templates($templates) {
     $templates['page-templates/video.php'] = 'DJ UrbanT Video';
     $templates['page-templates/audio.php'] = 'DJ UrbanT Audio';
     $templates['page-templates/contact.php'] = 'DJ UrbanT Contact';
+    $templates['page-templates/map.php'] = 'DJ UrbanT Map';
+    $templates['page-templates/admin.php'] = 'DJ UrbanT Admin';
     return $templates;
 }
 add_filter('theme_page_templates', 'djurbant_register_templates');

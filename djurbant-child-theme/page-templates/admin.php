@@ -1,0 +1,337 @@
+<?php
+/**
+ * Template Name: DJ UrbanT Admin
+ *
+ * Renders the original djurbant.com admin dashboard inside WordPress.
+ * Uses WordPress authentication instead of Google auth gate.
+ */
+defined('ABSPATH') || exit;
+
+if (!is_user_logged_in()) {
+    wp_redirect(wp_login_url(get_permalink()));
+    exit;
+}
+
+$theme_uri = get_stylesheet_directory_uri();
+$current_user = wp_get_current_user();
+$user_email = $current_user->user_email;
+$user_initials = strtoupper(substr($current_user->first_name ?: $current_user->display_name, 0, 1) . substr($current_user->last_name ?: '', 0, 1));
+if (strlen($user_initials) < 2) $user_initials = strtoupper(substr($user_email, 0, 2));
+?>
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DJ UrbanT | Admin</title>
+    <?php wp_head(); ?>
+    <link rel="stylesheet" href="<?php echo $theme_uri; ?>/admin.css" />
+</head>
+<body data-page="admin" <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+
+    <div id="admin-app" class="admin-app">
+      <header class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button id="sidebar-toggle-btn" class="admin-icon-btn mobile-only" type="button" aria-label="Open menu">☰</button>
+          <a class="admin-brand" href="<?php echo home_url('/admin/'); ?>" aria-label="Admin home">
+            <img src="<?php echo $theme_uri; ?>/assets/images/UT_TITLE_SVG.svg" alt="" />
+            <span class="admin-brand-wordmark">DJ URBANT</span>
+          </a>
+          <span class="admin-divider" aria-hidden="true"></span>
+          <span class="admin-topbar-label">ADMIN</span>
+          <button id="settings-toggle-btn" class="admin-icon-btn" type="button" aria-label="Open settings">⚙</button>
+        </div>
+        <div class="admin-topbar-right">
+          <a class="admin-home-link" href="<?php echo home_url('/'); ?>">← Home</a>
+          <a class="admin-home-link" href="<?php echo admin_url(); ?>" target="_blank" rel="noopener noreferrer">WP Admin</a>
+          <span class="admin-divider" aria-hidden="true"></span>
+          <div class="admin-user-block">
+            <span class="admin-avatar"><?php echo esc_html($user_initials); ?></span>
+            <span id="admin-user-email"><?php echo esc_html($user_email); ?></span>
+          </div>
+        </div>
+      </header>
+
+      <div id="sidebar-scrim" class="sidebar-scrim"></div>
+
+      <div class="admin-shell">
+        <aside id="admin-sidebar" class="admin-sidebar">
+          <nav aria-label="Admin navigation">
+            <button class="admin-nav-item is-active" type="button" data-view="home">
+              <span class="admin-nav-icon">⌂</span><span>Admin Home</span>
+            </button>
+            <p class="admin-nav-group-label">Site</p>
+            <button class="admin-nav-item" type="button" data-view="dashboard">
+              <span class="admin-nav-icon">▦</span><span>Dashboard</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="analytics">
+              <span class="admin-nav-icon">▤</span><span>Analytics</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="settings">
+              <span class="admin-nav-icon">⚙</span><span>Settings</span>
+            </button>
+            <p class="admin-nav-group-label">Content</p>
+            <button class="admin-nav-item" type="button" data-view="pages">
+              <span class="admin-nav-icon">▣</span><span>Pages</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="uploads">
+              <span class="admin-nav-icon">⇪</span><span>Uploads</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="socials">
+              <span class="admin-nav-icon">⎔</span><span>Socials</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="youtube">
+              <span class="admin-nav-icon">▶</span><span>YouTube</span>
+              <span id="youtube-live-badge" class="admin-badge admin-badge-amber">Live</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="bookings">
+              <span class="admin-nav-icon">⌕</span><span>Bookings</span>
+              <span id="bookings-unread-badge" class="admin-badge admin-badge-danger">0</span>
+            </button>
+          </nav>
+        </aside>
+
+        <main class="admin-main">
+          <section class="admin-view" data-view-panel="home">
+            <div class="admin-view-head">
+              <h1>Admin Home</h1>
+              <p>Fast overview and quick actions for site and content operations.</p>
+            </div>
+            <section class="admin-stats-grid">
+              <article class="admin-card admin-stat-card">
+                <p class="admin-stat-label">Site visits today</p>
+                <p class="admin-stat-value">142</p>
+                <p class="admin-stat-meta admin-stat-up">↑ 18% vs yesterday</p>
+              </article>
+              <article class="admin-card admin-stat-card">
+                <p class="admin-stat-label">Site visits (7d)</p>
+                <p class="admin-stat-value">892</p>
+                <p class="admin-stat-meta admin-stat-up">↑ 12% vs last week</p>
+              </article>
+              <article class="admin-card admin-stat-card">
+                <p class="admin-stat-label">Social stats</p>
+                <div class="admin-social-mini-grid">
+                  <p><span>▶</span> 4.8k</p><p><span>☁</span> 2.1k</p><p><span>◎</span> 7.4k</p><p><span>◉</span> 5.9k</p>
+                </div>
+              </article>
+              <article id="unread-stat-card" class="admin-card admin-stat-card">
+                <p class="admin-stat-label">Unread messages</p>
+                <p id="unread-stat-value" class="admin-stat-value">0</p>
+                <p class="admin-stat-meta">booking form</p>
+              </article>
+            </section>
+            <section class="admin-quick-grid">
+              <button class="admin-card admin-quick-card admin-quick-live" type="button" data-open-view="dashboard">
+                <div class="admin-quick-head"><span class="admin-quick-icon">▶</span><span id="home-youtube-badge" class="admin-badge admin-badge-amber">● Live now</span></div>
+                <h2>YouTube</h2><p>Channel status and latest stream controls.</p><span class="admin-quick-link">View dashboard →</span>
+              </button>
+              <button class="admin-card admin-quick-card admin-quick-alert" type="button" data-open-view="bookings">
+                <div class="admin-quick-head"><span class="admin-quick-icon">⌕</span><span id="home-bookings-badge" class="admin-badge admin-badge-danger">0</span></div>
+                <h2>Booking requests</h2><p id="home-bookings-meta">No unread venue requests.</p><span class="admin-quick-link">Open inbox →</span>
+              </button>
+              <button class="admin-card admin-quick-card" type="button" data-open-view="analytics">
+                <div class="admin-quick-head"><span class="admin-quick-icon">▤</span></div>
+                <h2>Site stats</h2><p>7-day trend, traffic and engagement.</p><span class="admin-quick-link">Open analytics →</span>
+              </button>
+              <button class="admin-card admin-quick-card" type="button" data-open-view="pages">
+                <div class="admin-quick-head"><span class="admin-quick-icon">▣</span></div>
+                <h2>Pages</h2><p><?php echo wp_count_posts('page')->publish; ?> pages published.</p><span class="admin-quick-link">Manage pages →</span>
+              </button>
+              <button class="admin-card admin-quick-card" type="button" data-open-view="uploads">
+                <div class="admin-quick-head"><span class="admin-quick-icon">⇪</span></div>
+                <h2>Uploads</h2><p>Last upload: Set #434 • Mar 15, 2026.</p><span class="admin-quick-link">Open uploads →</span>
+              </button>
+              <button class="admin-card admin-quick-card" type="button" data-open-view="socials">
+                <div class="admin-quick-head"><span class="admin-quick-icon">⎔</span></div>
+                <h2>Social links</h2><p>6 platforms active in navigation.</p><span class="admin-quick-link">Edit socials →</span>
+              </button>
+            </section>
+            <section id="home-activity-section" class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Recent activity</h2></div>
+              <ul id="recent-activity-list" class="admin-activity-list"></ul>
+            </section>
+            <section id="home-socials-section" class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Social links management</h2>
+                <button id="add-platform-btn" class="admin-btn admin-btn-outline" type="button">Add platform</button>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table"><thead><tr><th>Platform</th><th>URL</th><th>In nav</th><th>Order</th></tr></thead>
+                <tbody id="social-links-table-body"></tbody></table>
+              </div>
+              <form id="add-platform-form" class="admin-inline-form" hidden>
+                <input id="add-platform-name" type="text" placeholder="Platform name" />
+                <input id="add-platform-url" type="url" placeholder="https://example.com" />
+                <label class="admin-checkbox"><input id="add-platform-in-nav" type="checkbox" checked /><span>In nav</span></label>
+                <button class="admin-btn admin-btn-solid" type="submit">Add</button>
+                <button id="cancel-platform-btn" class="admin-btn admin-btn-outline" type="button">Cancel</button>
+              </form>
+            </section>
+            <section class="admin-card admin-customize" aria-label="Customise this page">
+              <div class="admin-customize-left">✎ Customise this page</div>
+              <div class="admin-customize-chips">
+                <button class="admin-chip is-on" type="button" data-home-chip="activity">Activity</button>
+                <button class="admin-chip is-on" type="button" data-home-chip="socials">Socials</button>
+              </div>
+              <button id="home-customize-reset" class="admin-reset-btn" type="button">Reset</button>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="dashboard" hidden>
+            <div class="admin-view-head"><h1>Dashboard</h1><p>Operational dashboard with toggleable modules.</p></div>
+            <section id="dashboard-site-stats" class="admin-stats-grid admin-stats-grid-compact">
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Site visits today</p><p class="admin-stat-value">142</p><p class="admin-stat-meta admin-stat-up">↑ 18%</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Site visits (7d)</p><p class="admin-stat-value">892</p><p class="admin-stat-meta admin-stat-up">↑ 12%</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Booking form views</p><p class="admin-stat-value">67</p><p class="admin-stat-meta">last 7 days</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Booking requests</p><p id="dashboard-bookings-value" class="admin-stat-value">0</p><p class="admin-stat-meta">inbox total</p></article>
+            </section>
+            <section id="dashboard-platforms" class="admin-stats-grid admin-stats-grid-compact">
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">YouTube</p><p class="admin-stat-value">4.8k</p><p class="admin-stat-meta">subscribers • live</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Mixcloud</p><p class="admin-stat-value">2.1k</p><p class="admin-stat-meta">followers • 124k plays</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">Instagram</p><p class="admin-stat-value">7.4k</p><p class="admin-stat-meta">followers • 7d reach</p></article>
+              <article class="admin-card admin-stat-card"><p class="admin-stat-label">TikTok</p><p class="admin-stat-value">5.9k</p><p class="admin-stat-meta">followers • 32 videos</p></article>
+            </section>
+            <section class="admin-dashboard-grid">
+              <article id="dashboard-pages" class="admin-card admin-block">
+                <div class="admin-block-head"><h2>Pages</h2></div>
+                <ul class="admin-simple-list">
+                  <?php
+                  $pages = get_pages(['sort_column' => 'menu_order', 'sort_order' => 'ASC']);
+                  foreach ($pages as $p) {
+                      $status = $p->post_status === 'publish' ? 'Published' : ucfirst($p->post_status);
+                      echo '<li>' . esc_html($p->post_title) . ' <span>' . esc_html($status) . '</span></li>';
+                  }
+                  ?>
+                </ul>
+              </article>
+              <article id="dashboard-uploads" class="admin-card admin-block">
+                <div class="admin-block-head"><h2>Uploads</h2></div>
+                <p>Drop zone and recent upload tracking module.</p>
+              </article>
+              <article id="dashboard-youtube" class="admin-card admin-block">
+                <div class="admin-block-head"><h2>YouTube Channel</h2></div>
+                <p>DJ UrbanT channel controls and live shortcuts.</p>
+                <div class="admin-inline-actions">
+                  <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">Open YouTube Studio</a>
+                  <a class="admin-btn admin-btn-outline" href="https://www.youtube.com/@djurbant/live" target="_blank" rel="noopener noreferrer">View Live</a>
+                </div>
+              </article>
+              <article id="dashboard-bookings" class="admin-card admin-block">
+                <div class="admin-block-head"><h2>Bookings</h2></div>
+                <p>Inbox and routing controls.</p>
+                <button class="admin-btn admin-btn-outline" type="button" data-open-view="bookings">Open bookings</button>
+              </article>
+            </section>
+            <section id="dashboard-socials" class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Social links</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table"><thead><tr><th>Platform</th><th>URL</th><th>In nav</th></tr></thead>
+                <tbody id="dashboard-social-links-body"></tbody></table>
+              </div>
+            </section>
+            <section class="admin-card admin-customize" aria-label="Customise dashboard">
+              <div class="admin-customize-left">✎ Customise dashboard</div>
+              <div class="admin-customize-chips admin-customize-chips-wrap">
+                <button class="admin-chip is-on" type="button" data-dashboard-chip="siteStats">Site stats</button>
+                <button class="admin-chip is-on" type="button" data-dashboard-chip="platforms">Platforms</button>
+                <button class="admin-chip is-on" type="button" data-dashboard-chip="pages">Pages</button>
+                <button class="admin-chip is-on" type="button" data-dashboard-chip="uploads">Uploads</button>
+                <button class="admin-chip is-on" type="button" data-dashboard-chip="youtube">YouTube</button>
+                <button class="admin-chip is-on" type="button" data-dashboard-chip="bookings">Bookings</button>
+                <button class="admin-chip is-on" type="button" data-dashboard-chip="socials">Socials</button>
+              </div>
+              <button id="dashboard-customize-reset" class="admin-reset-btn" type="button">Reset</button>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="bookings" hidden>
+            <div class="admin-view-head"><h1>Bookings</h1><p>Inbox for booking requests and routing controls.</p></div>
+            <section class="admin-card admin-block">
+              <div class="admin-table-wrap">
+                <table class="admin-table"><thead><tr><th>Status</th><th>Venue / Event</th><th>Date</th><th>Type</th><th>Budget</th><th>Received</th><th>Actions</th></tr></thead>
+                <tbody id="bookings-table-body"></tbody></table>
+              </div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="pages" hidden>
+            <div class="admin-view-head"><h1>Pages</h1><p>Manage WordPress pages.</p></div>
+            <section class="admin-card admin-block">
+              <ul class="admin-simple-list">
+                <?php foreach ($pages as $p): ?>
+                <li>
+                  <a href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank"><?php echo esc_html($p->post_title); ?></a>
+                  <span><?php echo $p->post_status === 'publish' ? 'Published' : ucfirst($p->post_status); ?></span>
+                </li>
+                <?php endforeach; ?>
+              </ul>
+              <div class="admin-inline-actions" style="margin-top:1rem;">
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('edit.php?post_type=page'); ?>" target="_blank">Manage in WP Admin</a>
+              </div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="uploads" hidden>
+            <div class="admin-view-head"><h1>Uploads</h1><p>Media library management.</p></div>
+            <section class="admin-card admin-block">
+              <div class="admin-inline-actions">
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('upload.php'); ?>" target="_blank">Open Media Library</a>
+              </div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="socials" hidden>
+            <div class="admin-view-head"><h1>Socials</h1><p>Social links are managed in site-content.json.</p></div>
+            <section class="admin-card admin-block"><p>Edit social links in the theme's site-content.json or via the Customizer.</p></section>
+          </section>
+
+          <section class="admin-view" data-view-panel="youtube" hidden>
+            <div class="admin-view-head"><h1>YouTube</h1><p>YouTube channel management.</p></div>
+            <section class="admin-card admin-block">
+              <div class="admin-inline-actions">
+                <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">Open YouTube Studio</a>
+                <a class="admin-btn admin-btn-outline" href="https://www.youtube.com/@DJ_UrbanT" target="_blank" rel="noopener noreferrer">View Channel</a>
+              </div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="analytics" hidden>
+            <div class="admin-view-head"><h1>Analytics</h1><p>Analytics module.</p></div>
+            <section class="admin-card admin-block"><p>Connect Google Analytics or a stats plugin to populate this view.</p></section>
+          </section>
+
+          <section class="admin-view" data-view-panel="settings" hidden>
+            <div class="admin-view-head"><h1>Settings</h1><p>Global admin settings.</p></div>
+            <section class="admin-card admin-block">
+              <div class="admin-inline-actions">
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('options-general.php'); ?>" target="_blank">WordPress Settings</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('customize.php'); ?>" target="_blank">Theme Customizer</a>
+              </div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div id="settings-panel-scrim" class="settings-panel-scrim" hidden></div>
+    <aside id="settings-panel" class="settings-panel" hidden>
+      <div class="settings-panel-head">
+        <h2>Settings</h2>
+        <button id="settings-close-btn" class="admin-icon-btn" type="button" aria-label="Close settings">✕</button>
+      </div>
+      <label class="settings-field"><span>Font size</span>
+        <select id="setting-font-size"><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option></select>
+      </label>
+      <label class="settings-field"><span>Timezone</span>
+        <select id="setting-timezone"><option value="Europe/Zurich">Europe/Zurich</option><option value="Europe/London">Europe/London</option><option value="UTC">UTC</option></select>
+      </label>
+      <label class="settings-field settings-checkbox-row">
+        <input id="setting-notifications" type="checkbox" /><span>Notifications enabled</span>
+      </label>
+      <a class="admin-btn admin-btn-outline" href="<?php echo wp_logout_url(home_url('/')); ?>">Logout</a>
+    </aside>
+
+    <script src="<?php echo $theme_uri; ?>/admin.js"></script>
+    <?php wp_footer(); ?>
+</body>
+</html>
