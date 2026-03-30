@@ -94,7 +94,16 @@ function djurbant_get_nested($arr, $path) {
             </button>
             <p class="admin-nav-group-label">Content</p>
             <button class="admin-nav-item" type="button" data-view="pages">
-              <span class="admin-nav-icon">▣</span><span>Pages</span>
+              <span class="admin-nav-icon">▣</span><span>Pages: Home</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="pages-video">
+              <span class="admin-nav-icon" style="opacity:0.4">▣</span><span>Pages: Video</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="pages-audio">
+              <span class="admin-nav-icon" style="opacity:0.4">▣</span><span>Pages: Audio</span>
+            </button>
+            <button class="admin-nav-item" type="button" data-view="pages-contact">
+              <span class="admin-nav-icon" style="opacity:0.4">▣</span><span>Pages: Contact</span>
             </button>
             <button class="admin-nav-item" type="button" data-view="uploads">
               <span class="admin-nav-icon">⇪</span><span>Uploads</span>
@@ -282,89 +291,55 @@ function djurbant_get_nested($arr, $path) {
             </section>
           </section>
 
-          <section class="admin-view" data-view-panel="pages" hidden>
-            <div class="admin-view-head"><h1>Pages</h1><p>Visual anatomy and section breakdown for each page.</p></div>
-
-            <?php include get_stylesheet_directory() . '/page-tabs-data.php'; ?>
-
-            <div style="display:flex;gap:0.35rem;margin-bottom:1rem;flex-wrap:wrap">
-              <?php foreach ($page_tabs as $tab_key => $tab): ?>
-              <button type="button" class="admin-page-tab<?php echo $tab_key === 'home' ? ' is-active' : ''; ?>" data-page-tab="<?php echo $tab_key; ?>" style="padding:0.5rem 1.1rem;border:1px solid var(--admin-border);border-radius:8px;background:<?php echo $tab_key === 'home' ? 'var(--gradient)' : 'var(--admin-surface)'; ?>;color:<?php echo $tab_key === 'home' ? '#fff' : 'var(--admin-text)'; ?>;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s ease"><?php echo esc_html($tab['label']); ?></button>
-              <?php endforeach; ?>
-            </div>
-
-            <?php foreach ($page_tabs as $tab_key => $tab): ?>
-            <div class="admin-page-panel" data-page-panel="<?php echo $tab_key; ?>"<?php echo $tab_key !== 'home' ? ' hidden' : ''; ?>>
-              <section class="admin-card admin-block">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
-                  <div>
-                    <h3 style="margin:0 0 0.8rem;font-size:1rem"><?php echo esc_html($tab['label']); ?> Sections</h3>
-                    <div style="display:grid;gap:0.45rem">
-                      <?php foreach ($tab['sections'] as $s): ?>
-                      <div style="display:flex;gap:0.6rem;align-items:flex-start;padding:0.5rem 0.6rem;border:1px solid var(--admin-border);border-radius:8px;background:var(--admin-surface)">
-                        <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700"><?php echo $s['num']; ?></span>
-                        <div style="flex:1;min-width:0">
-                          <div style="display:flex;align-items:center;gap:0.4rem">
-                            <strong style="font-size:0.85rem"><?php echo esc_html($s['name']); ?></strong>
-                            <a href="<?php echo admin_url('theme-editor.php?file=' . $tab['template'] . '&theme=djurbant-child'); ?>" target="_blank" style="font-size:0.68rem;color:#0078d4;text-decoration:none;border:1px solid rgba(0,120,212,0.3);border-radius:4px;padding:0.08rem 0.3rem">Edit</a>
-                          </div>
-                          <p style="margin:0;font-size:0.78rem;color:var(--admin-muted);line-height:1.3"><?php echo esc_html($s['desc']); ?></p>
+          <?php
+          include get_stylesheet_directory() . '/page-tabs-data.php';
+          $panel_keys = ['home' => 'pages', 'video' => 'pages-video', 'audio' => 'pages-audio', 'contact' => 'pages-contact'];
+          foreach ($page_tabs as $tab_key => $tab):
+            $panel_id = $panel_keys[$tab_key] ?? 'pages';
+          ?>
+          <section class="admin-view" data-view-panel="<?php echo $panel_id; ?>" hidden>
+            <div class="admin-view-head"><h1><?php echo esc_html($tab['label']); ?> Page</h1><p>Section breakdown and visual anatomy.</p></div>
+            <section class="admin-card admin-block">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+                <div>
+                  <h3 style="margin:0 0 0.8rem;font-size:1rem"><?php echo esc_html($tab['label']); ?> Sections</h3>
+                  <div style="display:grid;gap:0.45rem">
+                    <?php foreach ($tab['sections'] as $s): ?>
+                    <div style="display:flex;gap:0.6rem;align-items:flex-start;padding:0.5rem 0.6rem;border:1px solid var(--admin-border);border-radius:8px;background:var(--admin-surface)">
+                      <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700"><?php echo $s['num']; ?></span>
+                      <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:center;gap:0.4rem">
+                          <strong style="font-size:0.85rem"><?php echo esc_html($s['name']); ?></strong>
+                          <a href="<?php echo admin_url('theme-editor.php?file=' . $tab['template'] . '&theme=djurbant-child'); ?>" target="_blank" style="font-size:0.68rem;color:#0078d4;text-decoration:none;border:1px solid rgba(0,120,212,0.3);border-radius:4px;padding:0.08rem 0.3rem">Edit</a>
                         </div>
+                        <p style="margin:0;font-size:0.78rem;color:var(--admin-muted);line-height:1.3"><?php echo esc_html($s['desc']); ?></p>
                       </div>
-                      <?php endforeach; ?>
                     </div>
-
-                    <div style="margin-top:1rem;display:flex;gap:0.4rem;flex-wrap:wrap">
-                      <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo esc_url($tab['url']); ?>" target="_blank">View live →</a>
-                      <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo admin_url('theme-editor.php?file=' . $tab['template'] . '&theme=djurbant-child'); ?>" target="_blank">Edit template</a>
-                      <?php if ($tab_key === 'contact'): ?>
-                      <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo admin_url('admin.php?page=wpforms-builder&view=fields&form_id=54'); ?>" target="_blank">Edit form fields</a>
-                      <?php endif; ?>
-                    </div>
+                    <?php endforeach; ?>
                   </div>
-
-                  <div>
-                    <h3 style="margin:0 0 0.5rem;font-size:1rem">Preview</h3>
-                    <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000">
-                      <img src="<?php echo $theme_uri; ?>/assets/images/<?php echo $tab['preview']; ?>" alt="<?php echo esc_attr($tab['label']); ?> preview" style="width:100%;display:block;border-radius:10px" />
-                      <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
-                        <?php foreach ($tab['sections'] as $s): ?>
-                        <span style="position:absolute;<?php echo $s['pos']; ?>;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)"><?php echo $s['num']; ?></span>
-                        <?php endforeach; ?>
-                      </div>
+                  <div style="margin-top:1rem;display:flex;gap:0.4rem;flex-wrap:wrap">
+                    <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo esc_url($tab['url']); ?>" target="_blank">View live →</a>
+                    <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo admin_url('theme-editor.php?file=' . $tab['template'] . '&theme=djurbant-child'); ?>" target="_blank">Edit template</a>
+                    <?php if ($tab_key === 'contact'): ?>
+                    <a class="admin-btn admin-btn-outline" style="font-size:0.78rem;padding:0.3rem 0.6rem" href="<?php echo admin_url('admin.php?page=wpforms-builder&view=fields&form_id=54'); ?>" target="_blank">Edit form fields</a>
+                    <?php endif; ?>
+                  </div>
+                </div>
+                <div>
+                  <h3 style="margin:0 0 0.5rem;font-size:1rem">Preview</h3>
+                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000">
+                    <img src="<?php echo $theme_uri; ?>/assets/images/<?php echo $tab['preview']; ?>" alt="<?php echo esc_attr($tab['label']); ?> preview" style="width:100%;display:block;border-radius:10px" />
+                    <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
+                      <?php foreach ($tab['sections'] as $s): ?>
+                      <span style="position:absolute;<?php echo $s['pos']; ?>;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)"><?php echo $s['num']; ?></span>
+                      <?php endforeach; ?>
                     </div>
                   </div>
                 </div>
-              </section>
-            </div>
-            <?php endforeach; ?>
-
-            <section class="admin-card admin-block" style="margin-top:1rem">
-              <div class="admin-block-head"><h2>All Pages</h2></div>
-              <div class="admin-table-wrap">
-                <table class="admin-table">
-                  <thead><tr><th style="width:62px"></th><th>Page</th><th>Template</th><th>Status</th><th>Actions</th></tr></thead>
-                  <tbody>
-                    <?php
-                    $thumb_map_pages = ['DJ UrbanT' => 'home', 'Video' => 'video', 'Audio' => 'audio', 'Contact' => 'contact', 'Map' => 'map', 'Admin' => 'admin'];
-                    foreach ($pages as $p):
-                      $tmpl = get_page_template_slug($p->ID) ?: 'default';
-                      $tk = $thumb_map_pages[$p->post_title] ?? '';
-                      $tsrc = $tk ? $theme_uri . '/assets/images/thumb-' . $tk . '.png' : '';
-                    ?>
-                    <tr>
-                      <td><?php if ($tsrc): ?><a href="<?php echo get_permalink($p->ID); ?>" target="_blank"><img src="<?php echo $tsrc; ?>" alt="" style="width:56px;height:42px;object-fit:cover;border-radius:4px;border:1px solid var(--admin-border)" /></a><?php endif; ?></td>
-                      <td><strong><?php echo esc_html($p->post_title); ?></strong></td>
-                      <td><code style="font-size:0.78rem"><?php echo esc_html(str_replace('page-templates/', '', $tmpl)); ?></code></td>
-                      <td><?php echo $p->post_status === 'publish' ? '<span style="color:#1a7f37">Published</span>' : esc_html(ucfirst($p->post_status)); ?></td>
-                      <td><a href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank" style="color:#0078d4;font-size:0.85rem">Edit</a> · <a href="<?php echo get_permalink($p->ID); ?>" target="_blank" style="color:#0078d4;font-size:0.85rem">View</a></td>
-                    </tr>
-                    <?php endforeach; ?>
-                  </tbody>
-                </table>
               </div>
             </section>
           </section>
+          <?php endforeach; ?>
 
           <section class="admin-view" data-view-panel="uploads" hidden>
             <div class="admin-view-head"><h1>Uploads</h1><p>Media library management.</p></div>

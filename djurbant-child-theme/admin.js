@@ -681,36 +681,6 @@ function bindAll() {
 bindAll();
 initAuth();
 
-/* ── Page tabs switching ── */
-(function() {
-  function initPageTabs() {
-    var tabs = document.querySelectorAll('.admin-page-tab');
-    if (!tabs.length) return;
-    tabs.forEach(function(btn) {
-      btn.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        var tab = btn.dataset.pageTab;
-        document.querySelectorAll('.admin-page-tab').forEach(function(b) {
-          var isActive = b.dataset.pageTab === tab;
-          b.classList.toggle('is-active', isActive);
-          b.style.background = isActive ? 'var(--gradient)' : 'var(--admin-surface)';
-          b.style.color = isActive ? '#fff' : 'var(--admin-text)';
-        });
-        document.querySelectorAll('[data-page-panel]').forEach(function(p) {
-          p.hidden = p.dataset.pagePanel !== tab;
-        });
-        return false;
-      };
-    });
-  }
-  // Run immediately AND after a delay (in case openApp re-renders the DOM)
-  initPageTabs();
-  setTimeout(initPageTabs, 500);
-  setTimeout(initPageTabs, 1500);
-})();
-
 /* ── Real data integration (WordPress REST API) ── */
 (function () {
   const cfg = window.__djurbantAdmin;
