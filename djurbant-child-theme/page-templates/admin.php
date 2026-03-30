@@ -341,19 +341,19 @@ function djurbant_get_nested($arr, $path) {
                 </div>
 
                 <div>
-                  <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview</h3>
-                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000;height:520px">
-                    <iframe src="<?php echo home_url('/'); ?>" style="width:200%;height:1040px;transform:scale(0.5);transform-origin:top left;pointer-events:none;display:block;border:0" title="Homepage preview"></iframe>
-                    <div style="position:absolute;top:0;left:0;width:50%;height:520px;pointer-events:none">
-                      <span style="position:absolute;top:2%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">1</span>
-                      <span style="position:absolute;top:18%;left:35%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">2</span>
-                      <span style="position:absolute;top:54%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">3</span>
-                      <span style="position:absolute;top:73%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">4</span>
-                      <span style="position:absolute;top:83%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">5</span>
-                      <span style="position:absolute;top:93%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">6</span>
+                  <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview <span style="font-size:0.72rem;color:var(--admin-muted);font-weight:400">snapshot <?php echo date('M j, Y H:i'); ?></span></h3>
+                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000">
+                    <img src="<?php echo $theme_uri; ?>/assets/images/homepage-preview.png" alt="Homepage preview" style="width:100%;display:block;border-radius:10px" />
+                    <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
+                      <span style="position:absolute;top:1.5%;left:2%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">1</span>
+                      <span style="position:absolute;top:12%;left:38%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">2</span>
+                      <span style="position:absolute;top:35%;left:2%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">3</span>
+                      <span style="position:absolute;top:50%;left:2%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">4</span>
+                      <span style="position:absolute;top:63%;left:2%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">5</span>
+                      <span style="position:absolute;top:76%;left:2%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">6</span>
                     </div>
                   </div>
-                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbered badges match the section cards on the left. Click "Edit" to open the source file.</p>
+                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match sections on the left. Click "Edit" to open the source file. <a href="<?php echo home_url('/'); ?>" target="_blank" style="color:#0078d4">Open live site →</a></p>
                 </div>
               </div>
             </section>
@@ -422,19 +422,19 @@ function djurbant_get_nested($arr, $path) {
                 </div>
 
                 <div>
-                  <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview</h3>
-                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000;height:420px">
-                    <iframe src="<?php echo home_url('/'); ?>" style="width:200%;height:840px;transform:scale(0.5);transform-origin:top left;pointer-events:none;display:block;border:0" title="Live site preview"></iframe>
-                    <div style="position:absolute;top:0;left:0;width:50%;height:420px;pointer-events:none">
-                      <span style="position:absolute;top:48%;left:28%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">1</span>
-                      <span style="position:absolute;top:62%;left:10%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">2</span>
-                      <span style="position:absolute;top:87%;left:8%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">3</span>
-                      <span style="position:absolute;top:87%;right:12%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">4</span>
-                      <span style="position:absolute;top:4%;right:8%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">8</span>
-                      <span style="position:absolute;bottom:4%;left:35%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">9</span>
+                  <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview <span style="font-size:0.72rem;color:var(--admin-muted);font-weight:400"><?php echo date('M j'); ?></span></h3>
+                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000;max-height:480px">
+                    <img src="<?php echo $theme_uri; ?>/assets/images/homepage-preview.png" alt="Homepage preview" style="width:100%;display:block;border-radius:10px" />
+                    <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
+                      <span style="position:absolute;top:21%;left:28%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">1</span>
+                      <span style="position:absolute;top:35%;left:6%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">2</span>
+                      <span style="position:absolute;top:63%;left:6%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">3</span>
+                      <span style="position:absolute;top:63%;right:8%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">4</span>
+                      <span style="position:absolute;top:1.5%;right:4%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">8</span>
+                      <span style="position:absolute;top:77%;left:35%;display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.5)">9</span>
                     </div>
                   </div>
-                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match the edit fields on the left. <strong>⑨</strong> = Social links in footer (edited below).</p>
+                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbers match edit fields. <strong>⑨</strong> = Social links (footer).</p>
                 </div>
               </div>
             </section>
