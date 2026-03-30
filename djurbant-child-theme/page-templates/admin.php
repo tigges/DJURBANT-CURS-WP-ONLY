@@ -283,17 +283,101 @@ function djurbant_get_nested($arr, $path) {
           </section>
 
           <section class="admin-view" data-view-panel="pages" hidden>
-            <div class="admin-view-head"><h1>Pages</h1><p>Manage WordPress pages.</p></div>
+            <div class="admin-view-head"><h1>Pages</h1><p>Visual anatomy of the homepage and page management.</p></div>
+
             <section class="admin-card admin-block">
-              <ul class="admin-simple-list">
-                <?php foreach ($pages as $p): ?>
-                <li>
-                  <a href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank"><?php echo esc_html($p->post_title); ?></a>
-                  <span><?php echo $p->post_status === 'publish' ? 'Published' : ucfirst($p->post_status); ?></span>
-                </li>
-                <?php endforeach; ?>
-              </ul>
-              <div class="admin-inline-actions" style="margin-top:1rem;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+                <div>
+                  <h3 style="margin:0 0 1rem;font-size:1rem">Homepage Sections</h3>
+                  <div style="display:grid;gap:0.5rem">
+                    <?php
+                    $sections = [
+                        ['num' => 1, 'name' => 'Header', 'desc' => 'Fixed top bar with logo, nav, Book button', 'file' => 'page-templates/home.php', 'line' => '&lt;header class="site-header"&gt;'],
+                        ['num' => 2, 'name' => 'Hero Banner', 'desc' => '3D diamond, "DJ URBANT - LIVE" title, tagline, rainbow CTA', 'file' => 'page-templates/home.php', 'line' => '&lt;section id="live" class="hero"&gt;'],
+                        ['num' => 3, 'name' => 'Best of Artist', 'desc' => 'Video/Audio toggle, horizontal card carousel with YouTube/Mixcloud', 'file' => 'page-templates/home.php', 'line' => '&lt;section id="best-of-artist"&gt;'],
+                        ['num' => 4, 'name' => 'Stats Strip', 'desc' => '434+ Sets | Bass House | 5+ Platforms | On Demand', 'file' => 'page-templates/home.php', 'line' => '&lt;section class="stats-strip"&gt;'],
+                        ['num' => 5, 'name' => 'Booking CTA', 'desc' => '"Bring the set to you." + Book button', 'file' => 'page-templates/home.php', 'line' => '&lt;section class="about-cta-section"&gt;'],
+                        ['num' => 6, 'name' => 'Footer', 'desc' => 'Logo, 6 social icons (rainbow borders), copyright', 'file' => 'footer-djurbant.php', 'line' => '&lt;footer class="site-footer"&gt;'],
+                    ];
+                    foreach ($sections as $s):
+                    ?>
+                    <div style="display:flex;gap:0.7rem;align-items:flex-start;padding:0.6rem 0.7rem;border:1px solid var(--admin-border);border-radius:8px;background:var(--admin-surface)">
+                      <span style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:1.5rem;height:1.5rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.7rem;font-weight:700"><?php echo $s['num']; ?></span>
+                      <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem">
+                          <strong style="font-size:0.88rem"><?php echo esc_html($s['name']); ?></strong>
+                          <a href="<?php echo admin_url('theme-editor.php?file=' . $s['file'] . '&theme=djurbant-child'); ?>" target="_blank" style="font-size:0.7rem;color:#0078d4;text-decoration:none;border:1px solid rgba(0,120,212,0.3);border-radius:4px;padding:0.1rem 0.35rem">Edit</a>
+                        </div>
+                        <p style="margin:0;font-size:0.8rem;color:var(--admin-muted);line-height:1.35"><?php echo $s['desc']; ?></p>
+                        <code style="font-size:0.68rem;color:var(--admin-muted);opacity:0.7"><?php echo $s['line']; ?></code>
+                      </div>
+                    </div>
+                    <?php endforeach; ?>
+                  </div>
+
+                  <h3 style="margin:1.2rem 0 0.6rem;font-size:1rem">Data Sources</h3>
+                  <div style="display:grid;gap:0.4rem">
+                    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.7rem;border:1px solid var(--admin-border);border-radius:8px;background:var(--admin-surface)">
+                      <span style="font-size:0.75rem;font-weight:600;color:var(--admin-text)">CSS</span>
+                      <span style="font-size:0.8rem;color:var(--admin-muted);flex:1">djurbant-styles.css (colors, layout, animations)</span>
+                      <a href="<?php echo admin_url('theme-editor.php?file=djurbant-styles.css&theme=djurbant-child'); ?>" target="_blank" style="font-size:0.7rem;color:#0078d4;text-decoration:none;border:1px solid rgba(0,120,212,0.3);border-radius:4px;padding:0.1rem 0.35rem">Edit</a>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.7rem;border:1px solid var(--admin-border);border-radius:8px;background:var(--admin-surface)">
+                      <span style="font-size:0.75rem;font-weight:600;color:var(--admin-text)">JS</span>
+                      <span style="font-size:0.8rem;color:var(--admin-muted);flex:1">djurbant-script.js (carousel, APIs, playback)</span>
+                      <a href="<?php echo admin_url('theme-editor.php?file=djurbant-script.js&theme=djurbant-child'); ?>" target="_blank" style="font-size:0.7rem;color:#0078d4;text-decoration:none;border:1px solid rgba(0,120,212,0.3);border-radius:4px;padding:0.1rem 0.35rem">Edit</a>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.7rem;border:1px solid var(--admin-border);border-radius:8px;background:var(--admin-surface)">
+                      <span style="font-size:0.75rem;font-weight:600;color:var(--admin-text)">Text</span>
+                      <span style="font-size:0.8rem;color:var(--admin-muted);flex:1">site-content.json (all page text, CTA labels)</span>
+                      <a href="<?php echo admin_url('theme-editor.php?file=site-content.json&theme=djurbant-child'); ?>" target="_blank" style="font-size:0.7rem;color:#0078d4;text-decoration:none;border:1px solid rgba(0,120,212,0.3);border-radius:4px;padding:0.1rem 0.35rem">Edit</a>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.7rem;border:1px solid var(--admin-border);border-radius:8px;background:var(--admin-surface)">
+                      <span style="font-size:0.75rem;font-weight:600;color:var(--admin-text)">Feed</span>
+                      <span style="font-size:0.8rem;color:var(--admin-muted);flex:1">media-data.json (YouTube/Mixcloud videos & audio)</span>
+                      <a href="<?php echo admin_url('theme-editor.php?file=media-data.json&theme=djurbant-child'); ?>" target="_blank" style="font-size:0.7rem;color:#0078d4;text-decoration:none;border:1px solid rgba(0,120,212,0.3);border-radius:4px;padding:0.1rem 0.35rem">Edit</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 style="margin:0 0 0.6rem;font-size:1rem">Live Preview</h3>
+                  <div style="position:relative;border:1px solid var(--admin-border);border-radius:10px;overflow:hidden;background:#000;height:520px">
+                    <iframe src="<?php echo home_url('/'); ?>" style="width:200%;height:1040px;transform:scale(0.5);transform-origin:top left;pointer-events:none;display:block;border:0" title="Homepage preview"></iframe>
+                    <div style="position:absolute;top:0;left:0;width:50%;height:520px;pointer-events:none">
+                      <span style="position:absolute;top:2%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">1</span>
+                      <span style="position:absolute;top:18%;left:35%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">2</span>
+                      <span style="position:absolute;top:54%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">3</span>
+                      <span style="position:absolute;top:73%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">4</span>
+                      <span style="position:absolute;top:83%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">5</span>
+                      <span style="position:absolute;top:93%;left:4%;display:inline-flex;align-items:center;justify-content:center;width:1.4rem;height:1.4rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 8px rgba(0,200,255,0.6)">6</span>
+                    </div>
+                  </div>
+                  <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">Numbered badges match the section cards on the left. Click "Edit" to open the source file.</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>All Pages</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>Page</th><th>Template</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <?php foreach ($pages as $p):
+                      $tmpl = get_page_template_slug($p->ID) ?: 'default';
+                    ?>
+                    <tr>
+                      <td><strong><?php echo esc_html($p->post_title); ?></strong></td>
+                      <td><code style="font-size:0.78rem"><?php echo esc_html(str_replace('page-templates/', '', $tmpl)); ?></code></td>
+                      <td><?php echo $p->post_status === 'publish' ? '<span style="color:#1a7f37">Published</span>' : esc_html(ucfirst($p->post_status)); ?></td>
+                      <td><a href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank" style="color:#0078d4;font-size:0.85rem">Edit</a> · <a href="<?php echo get_permalink($p->ID); ?>" target="_blank" style="color:#0078d4;font-size:0.85rem">View</a></td>
+                    </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+              <div class="admin-inline-actions" style="margin-top:0.8rem">
                 <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('edit.php?post_type=page'); ?>" target="_blank">Manage in WP Admin</a>
               </div>
             </section>
