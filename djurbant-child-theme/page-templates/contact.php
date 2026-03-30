@@ -19,6 +19,16 @@ $theme_uri = get_stylesheet_directory_uri();
     <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $theme_uri; ?>/assets/images/apple-touch-icon.png" />
     <style>
       body[data-page="contact"] .media-section { padding-top: var(--space-3); margin-top: var(--space-4); }
+      body[data-page="contact"] .media-section { position: relative; border-top: 1px solid rgba(255,255,255,0.14); border-bottom: 1px solid rgba(255,255,255,0.14); background: rgba(5,6,11,0.86); padding: clamp(1rem,2.8vw,1.8rem) clamp(1rem,3vw,2.2rem); }
+      body[data-page="contact"] .media-section::before { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:var(--rainbow-divider-gradient); pointer-events:none; }
+      /* WPForms dark theme overrides */
+      .wpforms-container { background: transparent !important; }
+      .wpforms-form .wpforms-field-label { color: rgba(220,226,240,0.85) !important; font-family: "Syne",sans-serif !important; font-weight: 500 !important; }
+      .wpforms-form input[type="text"], .wpforms-form input[type="email"], .wpforms-form input[type="tel"], .wpforms-form input[type="date"], .wpforms-form input[type="url"], .wpforms-form textarea, .wpforms-form select { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.18) !important; color: #f1f1f1 !important; border-radius: 8px !important; padding: 0.7rem 0.85rem !important; font-family: "Syne",sans-serif !important; }
+      .wpforms-form input::placeholder, .wpforms-form textarea::placeholder { color: rgba(170,176,190,0.5) !important; }
+      .wpforms-form input:focus, .wpforms-form textarea:focus, .wpforms-form select:focus { border-color: rgba(0,198,255,0.5) !important; outline: none !important; box-shadow: 0 0 0 2px rgba(0,198,255,0.15) !important; }
+      .wpforms-form .wpforms-submit-container button { background: var(--cta-gradient, linear-gradient(118deg, #20d5ff, #2f7bff, #7a2cff, #ff2f8a)) !important; color: #fff !important; border: none !important; border-radius: 10px !important; padding: 0.8rem 2rem !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.08em !important; cursor: pointer !important; }
+      .wpforms-confirmation-container-full { background: rgba(0,198,255,0.1) !important; border: 1px solid rgba(0,198,255,0.3) !important; border-radius: 10px !important; color: #dff7ff !important; }
     </style>
 </head>
 <body data-page="contact" <?php body_class(); ?>>
@@ -42,36 +52,16 @@ $theme_uri = get_stylesheet_directory_uri();
         <p class="subpage-intro">We usually reply within 24 hours.</p>
 
         <form class="contact-form" action="mailto:booking@djurbant.com" method="post" enctype="text/plain" data-cms-action="page.formAction">
-          <div class="contact-grid">
-            <div class="contact-field">
-              <span>Name</span>
-              <input type="text" name="name" placeholder="Your name" required />
-            </div>
-            <div class="contact-field">
-              <span>Email</span>
-              <input type="email" name="email" placeholder="you@example.com" required />
-            </div>
-            <div class="contact-field">
-              <span>Phone</span>
-              <input type="tel" name="phone" placeholder="+1 (555) 000-0000" />
-            </div>
-            <div class="contact-field">
-              <span>Event date</span>
-              <input type="date" name="event_date" />
-            </div>
-            <div class="contact-field">
-              <span>Subject</span>
-              <input type="text" name="subject" placeholder="Booking / Collaboration / Press" />
-            </div>
-            <div class="contact-field">
-              <span>Message</span>
-              <textarea name="message" placeholder="Tell us about your event or inquiry…" rows="6" required></textarea>
-            </div>
-          </div>
+          <?php
+          if (function_exists('wpforms_display')) {
+              wpforms_display(54, true, true);
+          } else {
+              echo do_shortcode('[wpforms id="54"]');
+          }
+          ?>
 
-          <div class="section-cta">
+          <div class="section-cta" style="margin-top:1.5rem;">
             <a class="btn btn-outline" href="<?php echo home_url('/'); ?>" data-cms-text="page.backButtonLabel">Back Home</a>
-            <button class="btn btn-cta" type="submit" data-cms-text="page.submitButtonLabel">Send Inquiry</button>
           </div>
         </form>
       </section>

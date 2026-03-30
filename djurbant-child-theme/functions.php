@@ -145,8 +145,61 @@ function djurbant_load_template($template) {
 add_filter('page_template', 'djurbant_load_template');
 
 /**
- * Remove Kadence header/footer on our custom template pages
+ * REST API endpoint for reading/writing social links from site-content.json
  */
+function djurbant_register_social_api() {
+    register_rest_route('djurbant/v1', '/socials', [
+        [
+            'methods' => 'GET',
+            'callback' => 'djurbant_get_socials',
+            'permission_callback' => '__return_true',
+        ],
+        [
+            'methods' => 'POST',
+            'callback' => 'djurbant_update_socials',
+            'permission_callback' => function() {
+                return current_user_can('manage_options');
+            },
+        ],
+    ]);
+}
+add_action('rest_api_init', 'djurbant_register_social_api');
+
+function djurbant_get_socials() {
+    $file = get_stylesheet_directory() . '/site-content.json';
+    if (!file_exists($file)) return new WP_Error('not_found', 'site-content.json not found', ['status' => 404]);
+    $data = json_decode(file_get_contents($file), true);
+    return rest_ensure_response($data['global']['socialLinks'] ?? []);
+}
+
+function djurbant_update_socials($request) {
+    $file = get_stylesheet_directory() . '/site-content.json';
+    if (!file_exists($file)) return new WP_Error('not_found', 'site-content.json not found', ['status' => 404]);
+    $data = json_decode(file_get_contents($file), true);
+    $new_socials = $request->get_json_params();
+    if (!is_array($new_socials)) return new WP_Error('invalid', 'Invalid data', ['status' => 400]);
+    $data['global']['socialLinks'] = $new_socials;
+    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    return rest_ensure_response(['success' => true, 'socials' => $new_socials]);
+}
+
+/**
+ * REST API endpoint for WPForms entries count (bookings)
+ */
+function djurbant_register_bookings_api() {
+    register_rest_route('djurbant/v1', '/bookings-count', [
+        'methods' => 'GET',
+        'callback' => function() {
+            if (function_exists('wpforms_get_entries_count')) {
+                return rest_ensure_response(['count' => wpforms_get_entries_count(54)]);
+            }
+            $entries = get_posts(['post_type' => 'wpforms_entry', 'post_status' => 'publish', 'numberposts' => -1, 'meta_query' => [['key' => 'form_id', 'value' => '54']]]);
+            return rest_ensure_response(['count' => count($entries)]);
+        },
+        'permission_callback' => function() { return current_user_can('manage_options'); },
+    ]);
+}
+add_action('rest_api_init', 'djurbant_register_bookings_api');
 function djurbant_maybe_remove_kadence_wrappers() {
     $page_template = get_page_template_slug();
     if ($page_template && strpos($page_template, 'page-templates/') === 0) {
