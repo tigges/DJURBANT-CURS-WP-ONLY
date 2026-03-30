@@ -86,9 +86,6 @@ function djurbant_get_nested($arr, $path) {
             <button class="admin-nav-item" type="button" data-view="analytics">
               <span class="admin-nav-icon">▤</span><span>Analytics</span>
             </button>
-            <button class="admin-nav-item" type="button" data-view="settings">
-              <span class="admin-nav-icon">⚙</span><span>Settings</span>
-            </button>
             <p class="admin-nav-group-label">Content</p>
             <button class="admin-nav-item" type="button" data-view="pages">
               <span class="admin-nav-icon">▣</span><span>Pages: Home</span>
@@ -394,15 +391,6 @@ function djurbant_get_nested($arr, $path) {
             </section>
           </section>
 
-          <section class="admin-view" data-view-panel="settings" hidden>
-            <div class="admin-view-head"><h1>Settings</h1><p>Global admin settings.</p></div>
-            <section class="admin-card admin-block">
-              <div class="admin-inline-actions">
-                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('options-general.php'); ?>" target="_blank">WordPress Settings</a>
-                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('customize.php'); ?>" target="_blank">Theme Customizer</a>
-              </div>
-            </section>
-          </section>
 
           <section class="admin-view" data-view-panel="management" hidden>
             <div class="admin-view-head">

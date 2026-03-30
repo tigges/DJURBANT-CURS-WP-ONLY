@@ -471,12 +471,12 @@ body[data-hero-font="russo"] .hero-overlay-title {
   background: var(--cta-gradient);
   border-color: transparent;
   color: #fff;
-  font-family: "Syne", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-weight: 800;
+  font-family: "Barlow Condensed", "Syne", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   border-radius: var(--radius-md);
   text-transform: uppercase;
-  font-size: 0.96rem;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
   letter-spacing: 0.1em;
   padding-inline: 1.75rem;
   min-width: min(320px, calc(100vw - 2rem));
@@ -1590,15 +1590,19 @@ body[data-page="audio-more"] .subpage-bottom-nav .btn-outline {
 }
 
 .media-card.is-media-active {
-  border-color: rgba(var(--tile-overlay-accent-rgb), 0.72);
+  border-color: transparent;
+  border-width: 2px;
+  border-image: var(--rainbow-divider-gradient) 1;
   box-shadow:
-    0 0 0 1px rgba(var(--tile-overlay-accent-rgb), 0.46),
-    0 0 20px rgba(var(--tile-overlay-accent-rgb), 0.24);
+    0 0 0 1px rgba(var(--tile-overlay-accent-rgb), 0.3),
+    0 0 20px rgba(var(--tile-overlay-accent-rgb), 0.18),
+    0 0 12px rgba(255, 79, 161, 0.12);
 }
 
 .media-card:hover {
-  border-color: rgba(var(--brand-cyan-rgb), 0.34);
-  box-shadow: 0 0 12px rgba(var(--brand-cyan-rgb), 0.15);
+  border-color: transparent;
+  border-image: var(--rainbow-divider-gradient) 1;
+  box-shadow: 0 0 12px rgba(var(--brand-cyan-rgb), 0.15), 0 0 8px rgba(255, 79, 161, 0.1);
 }
 
 .media-card-more {
@@ -2791,10 +2795,13 @@ body[data-page="home"] .media-card.is-media-active,
 body[data-page="video"] .media-card.is-media-active,
 body[data-page="audio-more"] .media-card.is-media-active,
 body[data-page="contact"] .media-card.is-media-active {
-  border-color: rgba(var(--tile-overlay-accent-rgb), 0.82);
+  border-color: transparent;
+  border-width: 2px;
+  border-image: var(--rainbow-divider-gradient) 1;
   box-shadow:
-    0 0 0 1.5px rgba(var(--tile-overlay-accent-rgb), 0.66),
-    0 0 18px rgba(var(--tile-overlay-accent-rgb), 0.24);
+    0 0 0 1px rgba(var(--tile-overlay-accent-rgb), 0.4),
+    0 0 18px rgba(var(--tile-overlay-accent-rgb), 0.18),
+    0 0 12px rgba(255, 79, 161, 0.12);
 }
 
 body[data-page="home"] .genre-badge,
