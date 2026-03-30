@@ -1,3 +1,6 @@
+// WordPress auth bypass: if running inside WP (no auth gate element), skip Google login
+const __wpAuthBypass = !document.getElementById("admin-auth-gate");
+
 const AUTH_EMAIL = "c@tigges.ch";
 const AUTH_SESSION_KEY = "djurbant_admin_session";
 const AUTH_TIMEOUT_MS = 24 * 60 * 60 * 1000;
@@ -153,17 +156,18 @@ function showAuthMessage(message) {
 }
 
 function openApp(email) {
-  authGate.hidden = true;
+  if (authGate) authGate.hidden = true;
   app.hidden = false;
-  userEmailNode.textContent = email;
+  if (userEmailNode && email) userEmailNode.textContent = email;
   initializeAdminState();
   applyViewFromQuery();
 }
 
 function closeAppToLogin() {
+  if (__wpAuthBypass) { openApp(''); return; }
   app.hidden = true;
-  authGate.hidden = false;
-  accountPicker.hidden = true;
+  if (authGate) authGate.hidden = false;
+  if (accountPicker) accountPicker.hidden = true;
 }
 
 function handleLogin(email) {
