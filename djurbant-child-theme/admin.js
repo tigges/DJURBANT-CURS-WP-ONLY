@@ -683,28 +683,29 @@ initAuth();
 
 /* ── Real data integration (WordPress REST API) ── */
 (function () {
-  const cfg = window.__djurbantAdmin;
+  try {
+  var cfg = window.__djurbantAdmin;
   if (!cfg || !cfg.restBase) return;
 
-  const headers = { 'X-WP-Nonce': cfg.restNonce, 'Content-Type': 'application/json' };
+  var headers = { 'X-WP-Nonce': cfg.restNonce, 'Content-Type': 'application/json' };
 
   /* ── Bookings: fetch real WPForms entries ── */
   fetch(cfg.restBase + '/bookings', { headers })
-    .then(r => r.json())
-    .then(entries => {
+    .then(function(r) { return r.json(); })
+    .then(function(entries) {
       if (!Array.isArray(entries)) return;
-      const tbody = document.getElementById('bookings-table-body');
+      var tbody = document.getElementById('bookings-table-body');
       if (tbody) {
         tbody.innerHTML = '';
         if (entries.length === 0) {
           tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--admin-muted)">No booking requests yet. Submissions from the contact form will appear here.</td></tr>';
         } else {
-          entries.forEach(e => {
-            const row = document.createElement('tr');
-            const statusClass = e.status === 'new' ? 'admin-badge-danger' : '';
-            const statusLabel = e.status === 'new' ? 'New' : (e.status === 'read' ? 'Read' : e.status);
-            const date = new Date(e.date);
-            const dateStr = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          entries.forEach(function(e) {
+            var row = document.createElement('tr');
+            var statusClass = e.status === 'new' ? 'admin-badge-danger' : '';
+            var statusLabel = e.status === 'new' ? 'New' : (e.status === 'read' ? 'Read' : e.status);
+            var date = new Date(e.date);
+            var dateStr = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
             row.innerHTML = '<td><span class="admin-badge ' + statusClass + '">' + statusLabel + '</span></td>'
               + '<td><strong>' + (e.name || '—') + '</strong><br><small style="color:var(--admin-muted)">' + (e.email || '') + '</small></td>'
               + '<td>' + dateStr + '</td>'
@@ -716,17 +717,17 @@ initAuth();
         }
       }
       // Update badges
-      const newCount = entries.filter(e => e.status === 'new').length;
-      const totalCount = entries.length;
-      ['bookings-unread-badge', 'home-bookings-badge'].forEach(id => {
-        const el = document.getElementById(id);
+      var newCount = entries.filter(function(e) { return e.status === 'new'; }).length;
+      var totalCount = entries.length;
+      ['bookings-unread-badge', 'home-bookings-badge'].forEach(function(id) {
+        var el = document.getElementById(id);
         if (el) el.textContent = String(newCount);
       });
-      const unreadVal = document.getElementById('unread-stat-value');
+      var unreadVal = document.getElementById('unread-stat-value');
       if (unreadVal) unreadVal.textContent = String(newCount);
-      const dashVal = document.getElementById('dashboard-bookings-value');
+      var dashVal = document.getElementById('dashboard-bookings-value');
       if (dashVal) dashVal.textContent = String(totalCount);
-      const meta = document.getElementById('home-bookings-meta');
+      var meta = document.getElementById('home-bookings-meta');
       if (meta) meta.textContent = newCount > 0 ? newCount + ' new booking request' + (newCount > 1 ? 's' : '') : 'No unread venue requests.';
     })
     .catch(() => {});
@@ -751,55 +752,55 @@ initAuth();
     .catch(function() {});
 
   /* ── Socials: save handler for PHP-rendered form ── */
-  const saveSocialsBtn = document.getElementById('save-socials-btn');
+  var saveSocialsBtn = document.getElementById('save-socials-btn');
   if (saveSocialsBtn) {
     saveSocialsBtn.addEventListener('click', function() {
       // Read current socials from the API first, then merge edits
       fetch(cfg.restBase + '/socials', { headers })
-        .then(r => r.json())
-        .then(socialsObj => {
-          document.querySelectorAll('.socials-url-input').forEach(inp => {
-            const key = inp.dataset.key;
+        .then(function(r) { return r.json(); })
+        .then(function(socialsObj) {
+          document.querySelectorAll('.socials-url-input').forEach(function(inp) {
+            var key = inp.dataset.key;
             if (socialsObj[key]) socialsObj[key].url = inp.value;
           });
-          document.querySelectorAll('.socials-enabled-input').forEach(inp => {
-            const key = inp.dataset.key;
+          document.querySelectorAll('.socials-enabled-input').forEach(function(inp) {
+            var key = inp.dataset.key;
             if (socialsObj[key]) socialsObj[key].enabled = inp.checked;
           });
-          const status = document.getElementById('socials-save-status');
+          var status = document.getElementById('socials-save-status');
           if (status) status.textContent = 'Saving…';
           return fetch(cfg.restBase + '/socials', {
             method: 'POST', headers, body: JSON.stringify(socialsObj)
           });
         })
-        .then(r => r.json())
-        .then(d => {
-          const status = document.getElementById('socials-save-status');
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var status = document.getElementById('socials-save-status');
           if (status) status.textContent = d.success ? '✓ Saved' : 'Error saving';
           setTimeout(() => { if (status) status.textContent = ''; }, 3000);
         })
         .catch(() => {
-          const status = document.getElementById('socials-save-status');
+          var status = document.getElementById('socials-save-status');
           if (status) status.textContent = 'Network error';
         });
     });
   }
 
   /* ── Content text editor: save handler for PHP-rendered form ── */
-  const saveContentBtn = document.getElementById('save-content-btn');
+  var saveContentBtn = document.getElementById('save-content-btn');
   if (saveContentBtn) {
     saveContentBtn.addEventListener('click', function() {
-      const updates = {};
-      document.querySelectorAll('.content-field').forEach(el => {
+      var updates = {};
+      document.querySelectorAll('.content-field').forEach(function(el) {
         updates[el.dataset.path] = el.value;
       });
-      const status = document.getElementById('content-save-status');
+      var status = document.getElementById('content-save-status');
       if (status) status.textContent = 'Saving…';
       fetch(cfg.restBase + '/content', {
         method: 'POST', headers, body: JSON.stringify(updates)
       })
-        .then(r => r.json())
-        .then(d => {
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
           if (status) status.textContent = d.success ? '✓ Saved — refresh the site to see changes' : 'Error';
           setTimeout(() => { if (status) status.textContent = ''; }, 5000);
         })
@@ -809,14 +810,14 @@ initAuth();
 
   /* ── Dashboard socials: populate read-only table ── */
   fetch(cfg.restBase + '/socials', { headers })
-    .then(r => r.json())
-    .then(socialsObj => {
-      const tbody = document.getElementById('dashboard-social-links-body');
+    .then(function(r) { return r.json(); })
+    .then(function(socialsObj) {
+      var tbody = document.getElementById('dashboard-social-links-body');
       if (!tbody) return;
       tbody.innerHTML = '';
-      Object.keys(socialsObj).forEach(key => {
-        const s = socialsObj[key];
-        const row = document.createElement('tr');
+      Object.keys(socialsObj).forEach(function(key) {
+        var s = socialsObj[key];
+        var row = document.createElement('tr');
         row.innerHTML = '<td><strong>' + (s.label || key) + '</strong></td>'
           + '<td><a href="' + (s.url || '#') + '" target="_blank" style="color:#0078d4;font-size:0.85rem">' + (s.url || '') + '</a></td>'
           + '<td>' + (s.enabled !== false ? '✓' : '—') + '</td>';
@@ -891,4 +892,5 @@ initAuth();
       try { localStorage.setItem(ANA_CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() })); } catch(e) {}
     })
     .catch(function() {});
+  } catch(e) { console.error('DJ UrbanT admin data error:', e); }
 })();
