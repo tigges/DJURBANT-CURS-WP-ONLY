@@ -628,6 +628,11 @@ YouTube Channel              Mixcloud Profile          Self-Hosted (future)
                   <thead><tr><th>Tag</th><th>Description</th><th>Link</th></tr></thead>
                   <tbody>
                     <tr>
+                      <td><strong>STABLE-V4-ANALYTICS-LIVE</strong></td>
+                      <td>All systems live — analytics, feed, forms, admin</td>
+                      <td><a href="https://github.com/tigges/DJURBANT-CURS-WP-ONLY/tree/STABLE-V4-ANALYTICS-LIVE" target="_blank" rel="noopener noreferrer" style="color:#0078d4">View on GitHub</a></td>
+                    </tr>
+                    <tr>
                       <td><strong>STABLE-V3-AUTO-VIDEO</strong></td>
                       <td>YouTube/Mixcloud auto-refresh pipeline, Fluent Forms, admin polish</td>
                       <td><a href="https://github.com/tigges/DJURBANT-CURS-WP-ONLY/tree/STABLE-V3-AUTO-VIDEO" target="_blank" rel="noopener noreferrer" style="color:#0078d4">View on GitHub</a></td>
