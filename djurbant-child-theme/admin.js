@@ -678,8 +678,8 @@ function bindAll() {
   bindLogout();
 }
 
-bindAll();
-initAuth();
+try { bindAll(); } catch(e) { console.error('bindAll error:', e); }
+try { initAuth(); } catch(e) { console.error('initAuth error:', e); }
 
 /* ── Real data integration (WordPress REST API) ── */
 (function () {

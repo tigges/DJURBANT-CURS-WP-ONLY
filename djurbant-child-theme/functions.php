@@ -377,7 +377,7 @@ function djurbant_get_yt_api_key() {
 function djurbant_fetch_youtube_videos($api_key) {
     if (!$api_key) return [];
     $search_url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . DJURBANT_YT_CHANNEL_ID . '&type=video&order=date&maxResults=20&key=' . $api_key;
-    $search_resp = wp_remote_get($search_url, ['timeout' => 15]);
+    $search_resp = wp_remote_get($search_url, ['timeout' => 8]);
     if (is_wp_error($search_resp)) return [];
     $search_data = json_decode(wp_remote_retrieve_body($search_resp), true);
     $video_ids = [];
@@ -388,7 +388,7 @@ function djurbant_fetch_youtube_videos($api_key) {
     if (empty($video_ids)) return [];
 
     $stats_url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=' . implode(',', $video_ids) . '&key=' . $api_key;
-    $stats_resp = wp_remote_get($stats_url, ['timeout' => 15]);
+    $stats_resp = wp_remote_get($stats_url, ['timeout' => 8]);
     if (is_wp_error($stats_resp)) return [];
     $stats_data = json_decode(wp_remote_retrieve_body($stats_resp), true);
 
@@ -410,7 +410,7 @@ function djurbant_fetch_youtube_videos($api_key) {
 
 function djurbant_fetch_mixcloud_cloudcasts() {
     $url = 'https://api.mixcloud.com/' . DJURBANT_MC_USER . '/cloudcasts/?limit=30';
-    $resp = wp_remote_get($url, ['timeout' => 15]);
+    $resp = wp_remote_get($url, ['timeout' => 8]);
     if (is_wp_error($resp)) return [];
     $data = json_decode(wp_remote_retrieve_body($resp), true);
 
@@ -515,8 +515,10 @@ function djurbant_register_feed_api() {
     register_rest_route('djurbant/v1', '/refresh-feed', [
         'methods' => 'POST',
         'callback' => function() {
-            $result = djurbant_refresh_media_data();
-            return rest_ensure_response(['success' => $result, 'time' => gmdate('Y-m-d H:i:s')]);
+            // Schedule an immediate one-off cron event instead of running inline
+            wp_schedule_single_event(time(), 'djurbant_media_refresh');
+            spawn_cron();
+            return rest_ensure_response(['success' => true, 'time' => gmdate('Y-m-d H:i:s'), 'note' => 'Refresh scheduled. Data will update within 1-2 minutes.']);
         },
         'permission_callback' => function() { return current_user_can('manage_options'); },
     ]);
