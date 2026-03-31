@@ -731,6 +731,25 @@ initAuth();
     })
     .catch(() => {});
 
+  /* ── Bookings count: fetch from API and update badges ── */
+  fetch(cfg.restBase + '/bookings-count', { headers })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var total = d.count || 0;
+      var unread = d.unread || 0;
+      var badge = document.getElementById('home-bookings-badge');
+      if (badge) badge.textContent = String(total);
+      var meta = document.getElementById('home-bookings-meta');
+      if (meta) {
+        if (total === 0) meta.textContent = 'No messages yet. Submissions from the contact form will appear here.';
+        else if (unread > 0) meta.textContent = unread + ' unread of ' + total + ' total message' + (total > 1 ? 's' : '') + '.';
+        else meta.textContent = total + ' message' + (total > 1 ? 's' : '') + ' — all read.';
+      }
+      var statVal = document.getElementById('unread-stat-value');
+      if (statVal) statVal.textContent = String(unread || total);
+    })
+    .catch(function() {});
+
   /* ── Socials: save handler for PHP-rendered form ── */
   const saveSocialsBtn = document.getElementById('save-socials-btn');
   if (saveSocialsBtn) {

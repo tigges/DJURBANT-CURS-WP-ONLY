@@ -161,10 +161,10 @@ function djurbant_get_nested($arr, $path) {
               <section class="admin-card admin-quick-card admin-quick-alert">
                 <div class="admin-quick-head"><span class="admin-quick-icon">⌕</span><span id="home-bookings-badge" class="admin-badge admin-badge-danger">0</span></div>
                 <h2>Bookings</h2>
-                <p id="home-bookings-meta" style="color:var(--admin-muted);margin:0.3rem 0 0.6rem">Inbox and routing controls.</p>
+                <p id="home-bookings-meta" style="color:var(--admin-muted);margin:0.3rem 0 0.6rem">Loading message count...</p>
                 <div class="admin-inline-actions">
-                  <button class="admin-btn admin-btn-outline" type="button" data-open-view="bookings">Open bookings</button>
-                  <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=wpforms-entries&view=list&form_id=54'); ?>" target="_blank">View in WP Admin</a>
+                  <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=fluent_forms&route=entries&form_id=1'); ?>" target="_blank">View messages</a>
+                  <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('admin.php?page=fluent_forms&form_id=1&route=editor'); ?>" target="_blank">Edit form</a>
                 </div>
               </section>
               <button class="admin-card admin-quick-card" type="button" data-open-view="analytics">

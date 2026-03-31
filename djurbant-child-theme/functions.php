@@ -202,12 +202,21 @@ function djurbant_register_bookings_api() {
         'methods' => 'GET',
         'callback' => function() {
             global $wpdb;
-            $table = $wpdb->prefix . 'wpforms_entries';
-            if ($wpdb->get_var("SHOW TABLES LIKE '$table'") === $table) {
-                $count = $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE form_id = 54");
-                return rest_ensure_response(['count' => (int) $count]);
+            $count = 0;
+            // Check Fluent Forms entries table
+            $ff_table = $wpdb->prefix . 'fluentform_submissions';
+            if ($wpdb->get_var("SHOW TABLES LIKE '$ff_table'") === $ff_table) {
+                $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM $ff_table WHERE form_id = 1 AND status != 'trashed'");
+                $unread = (int) $wpdb->get_var("SELECT COUNT(*) FROM $ff_table WHERE form_id = 1 AND status = 'unread'");
+                return rest_ensure_response(['count' => $count, 'unread' => $unread, 'source' => 'fluent_forms']);
             }
-            return rest_ensure_response(['count' => 0]);
+            // Fallback to WPForms
+            $wp_table = $wpdb->prefix . 'wpforms_entries';
+            if ($wpdb->get_var("SHOW TABLES LIKE '$wp_table'") === $wp_table) {
+                $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM $wp_table WHERE form_id = 54");
+                return rest_ensure_response(['count' => $count, 'unread' => 0, 'source' => 'wpforms']);
+            }
+            return rest_ensure_response(['count' => 0, 'unread' => 0, 'source' => 'none']);
         },
         'permission_callback' => function() { return current_user_can('manage_options'); },
     ]);
