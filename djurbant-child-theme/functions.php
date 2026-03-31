@@ -362,6 +362,178 @@ function djurbant_register_analytics_api() {
     ]);
 }
 add_action('rest_api_init', 'djurbant_register_analytics_api');
+
+/**
+ * YouTube/Mixcloud auto-refresh pipeline
+ */
+define('DJURBANT_YT_CHANNEL_ID', 'UCWVZzuD7wttYjaJpHxy0iiA');
+define('DJURBANT_MC_USER', 'urbant');
+define('DJURBANT_FEATURED_BONUS', 150);
+
+function djurbant_get_yt_api_key() {
+    return get_option('djurbant_youtube_api_key', '');
+}
+
+function djurbant_fetch_youtube_videos($api_key) {
+    if (!$api_key) return [];
+    $search_url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . DJURBANT_YT_CHANNEL_ID . '&type=video&order=date&maxResults=20&key=' . $api_key;
+    $search_resp = wp_remote_get($search_url, ['timeout' => 15]);
+    if (is_wp_error($search_resp)) return [];
+    $search_data = json_decode(wp_remote_retrieve_body($search_resp), true);
+    $video_ids = [];
+    foreach ($search_data['items'] ?? [] as $item) {
+        $video_ids[] = $item['id']['videoId'] ?? '';
+    }
+    $video_ids = array_filter($video_ids);
+    if (empty($video_ids)) return [];
+
+    $stats_url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=' . implode(',', $video_ids) . '&key=' . $api_key;
+    $stats_resp = wp_remote_get($stats_url, ['timeout' => 15]);
+    if (is_wp_error($stats_resp)) return [];
+    $stats_data = json_decode(wp_remote_retrieve_body($stats_resp), true);
+
+    $videos = [];
+    foreach ($stats_data['items'] ?? [] as $item) {
+        $videos[] = [
+            'id' => $item['id'],
+            'title' => $item['snippet']['title'] ?? '',
+            'genres' => ['bass-house'],
+            'url' => 'https://www.youtube.com/watch?v=' . $item['id'],
+            'embedUrl' => 'https://www.youtube.com/embed/' . $item['id'],
+            'thumbnailUrl' => $item['snippet']['thumbnails']['high']['url'] ?? '',
+            'viewCount' => (int)($item['statistics']['viewCount'] ?? 0),
+            'publishedAt' => substr($item['snippet']['publishedAt'] ?? '', 0, 10),
+        ];
+    }
+    return $videos;
+}
+
+function djurbant_fetch_mixcloud_cloudcasts() {
+    $url = 'https://api.mixcloud.com/' . DJURBANT_MC_USER . '/cloudcasts/?limit=30';
+    $resp = wp_remote_get($url, ['timeout' => 15]);
+    if (is_wp_error($resp)) return [];
+    $data = json_decode(wp_remote_retrieve_body($resp), true);
+
+    $audio = [];
+    foreach ($data['data'] ?? [] as $item) {
+        $audio[] = [
+            'key' => $item['key'] ?? '',
+            'title' => $item['name'] ?? '',
+            'genres' => ['bass-house'],
+            'url' => $item['url'] ?? ('https://www.mixcloud.com' . ($item['key'] ?? '')),
+            'embedUrl' => 'https://www.mixcloud.com/widget/iframe/?hide_cover=0&mini=0&light=0&feed=' . urlencode($item['key'] ?? ''),
+            'playCount' => (int)($item['play_count'] ?? 0),
+            'favoriteCount' => (int)($item['favorite_count'] ?? 0),
+            'publishedAt' => $item['created_time'] ?? '',
+        ];
+    }
+    return $audio;
+}
+
+function djurbant_rank_media($items, $count_key = 'viewCount') {
+    if (empty($items)) return ['top3' => [], 'rest' => []];
+
+    usort($items, function($a, $b) use ($count_key) {
+        return ($b[$count_key] ?? 0) - ($a[$count_key] ?? 0);
+    });
+
+    if (!empty($items)) {
+        $newest_idx = 0;
+        $newest_date = '';
+        foreach ($items as $i => $item) {
+            $d = $item['publishedAt'] ?? '';
+            if ($d > $newest_date) { $newest_date = $d; $newest_idx = $i; }
+        }
+        if ($newest_idx > 0) {
+            $newest = $items[$newest_idx];
+            $newest['baseViewCount'] = $newest[$count_key] ?? 0;
+            $newest['featuredBonus'] = DJURBANT_FEATURED_BONUS;
+            $newest['isFeaturedRecent'] = true;
+            $newest[$count_key] = ($newest[$count_key] ?? 0) + DJURBANT_FEATURED_BONUS;
+            array_splice($items, $newest_idx, 1);
+            array_unshift($items, $newest);
+            usort($items, function($a, $b) use ($count_key) {
+                return ($b[$count_key] ?? 0) - ($a[$count_key] ?? 0);
+            });
+        }
+    }
+
+    return [
+        'top3' => array_slice($items, 0, 3),
+        'rest' => array_slice($items, 3),
+    ];
+}
+
+function djurbant_refresh_media_data() {
+    $api_key = djurbant_get_yt_api_key();
+    $videos = djurbant_fetch_youtube_videos($api_key);
+    $audio = djurbant_fetch_mixcloud_cloudcasts();
+
+    $file = get_stylesheet_directory() . '/media-data.json';
+    $existing = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+
+    if (empty($videos) && empty($audio)) return false;
+
+    $latest_vid_id = !empty($videos) ? $videos[0]['id'] : ($existing['youtubeLive']['latestVideoId'] ?? '');
+
+    $media_data = [
+        'generatedAt' => gmdate('Y-m-d\TH:i:s\Z'),
+        'strategy' => [
+            'videos' => 'Auto-generated from YouTube Data API v3. Ranked by viewCount desc, most recent pinned to slot #1.',
+            'audio' => 'Auto-generated from Mixcloud API. Ranked by playCount desc, most recent pinned to slot #1.',
+        ],
+        'youtubeLive' => [
+            'isLive' => false,
+            'liveVideoId' => '',
+            'liveUrl' => '',
+            'latestVideoId' => $latest_vid_id,
+            'latestUrl' => $latest_vid_id ? 'https://www.youtube.com/watch?v=' . $latest_vid_id : '',
+        ],
+        'videos' => !empty($videos) ? djurbant_rank_media($videos, 'viewCount') : ($existing['videos'] ?? ['top3' => [], 'rest' => []]),
+        'audio' => !empty($audio) ? djurbant_rank_media($audio, 'playCount') : ($existing['audio'] ?? ['top3' => [], 'rest' => []]),
+    ];
+
+    file_put_contents($file, json_encode($media_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    return true;
+}
+
+// Register custom cron schedule
+function djurbant_cron_schedules($schedules) {
+    $schedules['sixhourly'] = ['interval' => 6 * HOUR_IN_SECONDS, 'display' => 'Every 6 hours'];
+    return $schedules;
+}
+add_filter('cron_schedules', 'djurbant_cron_schedules');
+
+// Schedule the refresh
+if (!wp_next_scheduled('djurbant_media_refresh')) {
+    wp_schedule_event(time(), 'sixhourly', 'djurbant_media_refresh');
+}
+add_action('djurbant_media_refresh', 'djurbant_refresh_media_data');
+
+// REST endpoint to trigger manual refresh + store API key
+function djurbant_register_feed_api() {
+    register_rest_route('djurbant/v1', '/refresh-feed', [
+        'methods' => 'POST',
+        'callback' => function() {
+            $result = djurbant_refresh_media_data();
+            return rest_ensure_response(['success' => $result, 'time' => gmdate('Y-m-d H:i:s')]);
+        },
+        'permission_callback' => function() { return current_user_can('manage_options'); },
+    ]);
+    register_rest_route('djurbant/v1', '/youtube-key', [
+        'methods' => 'POST',
+        'callback' => function($request) {
+            $key = $request->get_param('key');
+            if ($key) {
+                update_option('djurbant_youtube_api_key', sanitize_text_field($key));
+                return rest_ensure_response(['success' => true]);
+            }
+            return rest_ensure_response(['success' => false]);
+        },
+        'permission_callback' => function() { return current_user_can('manage_options'); },
+    ]);
+}
+add_action('rest_api_init', 'djurbant_register_feed_api');
 function djurbant_maybe_remove_kadence_wrappers() {
     $page_template = get_page_template_slug();
     if ($page_template && strpos($page_template, 'page-templates/') === 0) {

@@ -550,13 +550,25 @@ YouTube Channel              Mixcloud Profile          Self-Hosted (future)
 
             <section class="admin-card admin-block" style="margin-top:1rem">
               <div class="admin-block-head"><h2>Update Feed</h2></div>
-              <p style="color:var(--admin-muted);margin:0 0 0.8rem">Edit media-data.json to add, remove, or reorder videos and audio. The auto-refresh pipeline (YouTube API) is planned for a future update.</p>
-              <div class="admin-inline-actions">
+              <p style="color:var(--admin-muted);margin:0 0 0.6rem">Feed auto-refreshes every 6 hours via YouTube + Mixcloud APIs. You can also trigger a manual refresh.</p>
+              <div class="admin-inline-actions" style="flex-wrap:wrap;gap:0.5rem">
+                <button id="refresh-feed-btn" class="admin-btn admin-btn-solid" type="button" style="font-size:0.82rem">↻ Refresh now</button>
                 <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('theme-editor.php?file=media-data.json&theme=djurbant-child'); ?>" target="_blank">Edit media-data.json</a>
                 <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('upload.php'); ?>" target="_blank">Upload audio files</a>
                 <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">YouTube Studio</a>
                 <a class="admin-btn admin-btn-outline" href="https://www.mixcloud.com/urbant/" target="_blank" rel="noopener noreferrer">Mixcloud Profile</a>
               </div>
+              <p id="refresh-feed-status" style="margin:0.5rem 0 0;font-size:0.82rem;color:var(--admin-muted)"></p>
+            </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>YouTube API Key</h2></div>
+              <p style="color:var(--admin-muted);margin:0 0 0.5rem">Required for auto-refresh. Stored securely in WordPress database.</p>
+              <div style="display:flex;gap:0.5rem;align-items:center">
+                <input id="yt-api-key-input" type="password" value="<?php echo esc_attr(djurbant_get_yt_api_key() ? '••••••••••••••••••••' : ''); ?>" placeholder="Paste YouTube API key" style="flex:1;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.4rem 0.55rem;font-size:0.85rem" />
+                <button id="save-yt-key-btn" class="admin-btn admin-btn-outline" type="button" style="font-size:0.82rem">Save key</button>
+              </div>
+              <p id="yt-key-status" style="margin:0.3rem 0 0;font-size:0.78rem;color:var(--admin-muted)"><?php echo djurbant_get_yt_api_key() ? '✓ Key stored' : 'No key stored yet'; ?></p>
             </section>
           </section>
 

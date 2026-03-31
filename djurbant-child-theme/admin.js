@@ -893,4 +893,39 @@ initAuth();
     })
     .catch(function() {});
   } catch(e) { console.error('DJ UrbanT admin data error:', e); }
+
+  /* ── Feed Pipeline: refresh + API key ── */
+  try {
+  var refreshBtn = document.getElementById('refresh-feed-btn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', function() {
+      var status = document.getElementById('refresh-feed-status');
+      if (status) status.textContent = 'Refreshing feed from YouTube + Mixcloud APIs...';
+      refreshBtn.disabled = true;
+      fetch(cfg.restBase + '/refresh-feed', { method: 'POST', headers: headers })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (status) status.textContent = d.success ? '✓ Feed refreshed at ' + d.time + '. Reload the site to see changes.' : '✗ Refresh failed — check API key.';
+          refreshBtn.disabled = false;
+        })
+        .catch(function() { if (status) status.textContent = 'Network error'; refreshBtn.disabled = false; });
+    });
+  }
+  var saveKeyBtn = document.getElementById('save-yt-key-btn');
+  if (saveKeyBtn) {
+    saveKeyBtn.addEventListener('click', function() {
+      var input = document.getElementById('yt-api-key-input');
+      var status = document.getElementById('yt-key-status');
+      var key = input ? input.value.trim() : '';
+      if (!key || key.indexOf('•') >= 0) { if (status) status.textContent = 'Enter a new key to save.'; return; }
+      fetch(cfg.restBase + '/youtube-key', { method: 'POST', headers: headers, body: JSON.stringify({ key: key }) })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (status) status.textContent = d.success ? '✓ Key saved' : 'Error saving';
+          if (d.success && input) input.value = '••••••••••••••••••••';
+        })
+        .catch(function() { if (status) status.textContent = 'Network error'; });
+    });
+  }
+  } catch(e) { console.error('Feed pipeline error:', e); }
 })();
