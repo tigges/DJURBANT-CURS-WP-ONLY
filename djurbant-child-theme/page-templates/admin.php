@@ -36,14 +36,14 @@ $sc_file = get_stylesheet_directory() . '/site-content.json';
 $sc_data = file_exists($sc_file) ? json_decode(file_get_contents($sc_file), true) : [];
 $socials = $sc_data['global']['socialLinks'] ?? [];
 $content_fields = [
-    ['path' => 'pages.home.hero.tagline', 'label' => 'Hero tagline'],
-    ['path' => 'pages.home.bestOf.title', 'label' => '"Best of Artist" heading'],
-    ['path' => 'pages.home.bookingBand.title', 'label' => 'Booking band title'],
-    ['path' => 'pages.home.bookingBand.buttonLabel', 'label' => 'Booking button label'],
-    ['path' => 'pages.contact.title', 'label' => 'Contact page title'],
-    ['path' => 'pages.contact.introText', 'label' => 'Contact intro text', 'type' => 'textarea'],
-    ['path' => 'global.meta.replySlaText', 'label' => 'Reply SLA text'],
-    ['path' => 'global.ctaDefaults.bookLabel', 'label' => 'Header "Book" button label'],
+    ['path' => 'global.ctaDefaults.bookLabel', 'label' => 'Book button label', 'group' => '① Header'],
+    ['path' => 'pages.home.hero.tagline', 'label' => 'Tagline', 'group' => '② Hero Banner'],
+    ['path' => 'pages.home.bestOf.title', 'label' => 'Section heading', 'group' => '③ Best of Artist'],
+    ['path' => 'pages.home.bookingBand.title', 'label' => 'Title', 'group' => '⑤ Booking CTA'],
+    ['path' => 'pages.home.bookingBand.buttonLabel', 'label' => 'Button label', 'group' => ''],
+    ['path' => 'pages.contact.title', 'label' => 'Page title', 'group' => 'Contact Page'],
+    ['path' => 'pages.contact.introText', 'label' => 'Intro text', 'type' => 'textarea', 'group' => ''],
+    ['path' => 'global.meta.replySlaText', 'label' => 'Reply SLA text', 'group' => ''],
 ];
 function djurbant_get_nested($arr, $path) {
     $keys = explode('.', $path);
@@ -283,18 +283,25 @@ function djurbant_get_nested($arr, $path) {
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
                 <div>
                   <h3 style="margin:0 0 1rem;font-size:1rem">Site Text Content</h3>
-                  <div style="display:grid;gap:0.7rem">
-                    <?php foreach ($content_fields as $i => $f):
+                  <div style="display:grid;gap:0.5rem">
+                    <?php
+                    $last_group = null;
+                    foreach ($content_fields as $i => $f):
                       $val = djurbant_get_nested($sc_data, $f['path']);
                       $type = $f['type'] ?? 'text';
                       $num = $i + 1;
+                      $group = $f['group'] ?? '';
+                      if ($group && $group !== $last_group):
+                        $last_group = $group;
                     ?>
+                    <div style="margin-top:<?php echo $i === 0 ? '0' : '0.6rem'; ?>;padding:0.35rem 0 0.15rem;border-top:<?php echo $i === 0 ? 'none' : '1px solid var(--admin-border)'; ?>;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--admin-muted)"><?php echo esc_html($group); ?></div>
+                    <?php endif; ?>
                     <label style="display:block">
-                      <span style="font-size:0.8rem;font-weight:600;color:var(--admin-text)"><span style="display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:linear-gradient(135deg,#00c8ff,#7b5cf0);color:#fff;font-size:0.65rem;font-weight:700;margin-right:0.35rem"><?php echo $num; ?></span><?php echo esc_html($f['label']); ?></span>
+                      <span style="font-size:0.8rem;font-weight:600;color:var(--admin-text)"><?php echo esc_html($f['label']); ?></span>
                       <?php if ($type === 'textarea'): ?>
-                      <textarea class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" rows="2" style="width:100%;margin-top:0.25rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.4rem 0.55rem;font-size:0.85rem;font-family:inherit;resize:vertical"><?php echo esc_textarea($val); ?></textarea>
+                      <textarea class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" rows="2" style="width:100%;margin-top:0.2rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.4rem 0.55rem;font-size:0.85rem;font-family:inherit;resize:vertical"><?php echo esc_textarea($val); ?></textarea>
                       <?php else: ?>
-                      <input type="text" class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" value="<?php echo esc_attr($val); ?>" style="width:100%;margin-top:0.25rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.38rem 0.55rem;font-size:0.85rem" />
+                      <input type="text" class="content-field" data-path="<?php echo esc_attr($f['path']); ?>" value="<?php echo esc_attr($val); ?>" style="width:100%;margin-top:0.2rem;background:var(--admin-surface);border:1px solid var(--admin-border);color:var(--admin-text);border-radius:6px;padding:0.38rem 0.55rem;font-size:0.85rem" />
                       <?php endif; ?>
                     </label>
                     <?php endforeach; ?>
