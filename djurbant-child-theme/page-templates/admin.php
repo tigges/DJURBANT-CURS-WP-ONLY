@@ -620,6 +620,33 @@ YouTube Channel              Mixcloud Profile          Self-Hosted (future)
                 <a class="admin-btn admin-btn-outline" href="<?php echo admin_url(); ?>" target="_blank">WP Admin</a>
               </div>
             </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>Stable Versions (Rollback Tags)</h2></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead><tr><th>Tag</th><th>Description</th><th>Link</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>STABLE-V3-AUTO-VIDEO</strong></td>
+                      <td>YouTube/Mixcloud auto-refresh pipeline, Fluent Forms, admin polish</td>
+                      <td><a href="https://github.com/tigges/DJURBANT-CURS-WP-ONLY/tree/STABLE-V3-AUTO-VIDEO" target="_blank" rel="noopener noreferrer" style="color:#0078d4">View on GitHub</a></td>
+                    </tr>
+                    <tr>
+                      <td><strong>STABLE-V2-VISUAL-FINAL</strong></td>
+                      <td>Simplified admin, all visual polish complete</td>
+                      <td><a href="https://github.com/tigges/DJURBANT-CURS-WP-ONLY/tree/STABLE-V2-VISUAL-FINAL" target="_blank" rel="noopener noreferrer" style="color:#0078d4">View on GitHub</a></td>
+                    </tr>
+                    <tr>
+                      <td><strong>STABLE-V1-COMPLETE-CLONE</strong></td>
+                      <td>Complete 6-page clone of djurbant.com</td>
+                      <td><a href="https://github.com/tigges/DJURBANT-CURS-WP-ONLY/tree/STABLE-V1-COMPLETE-CLONE" target="_blank" rel="noopener noreferrer" style="color:#0078d4">View on GitHub</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p style="margin:0.5rem 0 0;font-size:0.78rem;color:var(--admin-muted)">To rollback: <code style="font-size:0.75rem;background:var(--admin-surface);padding:0.1rem 0.3rem;border-radius:3px">git checkout STABLE-V3-AUTO-VIDEO</code></p>
+            </section>
           </section>
         </main>
       </div>
