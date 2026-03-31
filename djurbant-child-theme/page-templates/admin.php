@@ -113,6 +113,9 @@ function djurbant_get_nested($arr, $path) {
             <button class="admin-nav-item" type="button" data-view="management">
               <span class="admin-nav-icon">☰</span><span>Management</span>
             </button>
+            <button class="admin-nav-item" type="button" data-view="feed-pipeline">
+              <span class="admin-nav-icon">⇄</span><span>Feed Pipeline</span>
+            </button>
             <button class="admin-nav-item" type="button" data-view="sitemap">
               <span class="admin-nav-icon">◫</span><span>Site Map</span>
             </button>
@@ -473,6 +476,86 @@ function djurbant_get_nested($arr, $path) {
                     <tr><td>Users &amp; roles</td><td>Users</td><td><a href="<?php echo admin_url('users.php'); ?>" target="_blank">Users</a></td><td>Manage access</td></tr>
                   </tbody>
                 </table>
+              </div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-view-panel="feed-pipeline" hidden>
+            <div class="admin-view-head"><h1>Feed Pipeline</h1><p>How video and audio content flows from platforms to the live site.</p></div>
+
+            <section class="admin-card admin-block">
+              <div class="admin-block-head"><h2>Data Flow</h2></div>
+              <pre style="background:var(--color-surface-outer);border:1px solid var(--admin-border);border-radius:8px;padding:1rem;font-size:0.78rem;line-height:1.5;overflow-x:auto;color:var(--admin-text);margin:0">
+YouTube Channel              Mixcloud Profile          Self-Hosted (future)
+(@DJ_UrbanT)                 (/urbant/)                WordPress Media Library
+      │                            │                          │
+      ▼                            ▼                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                     media-data.json                               │
+│                                                                   │
+│  videos.top3[]  ──── 3 highest-ranked YouTube videos             │
+│  videos.rest[]  ──── remaining YouTube videos                    │
+│  audio.top3[]   ──── 3 highest-ranked Mixcloud/self-hosted       │
+│  audio.rest[]   ──── remaining audio mixes                       │
+│  youtubeLive    ──── live stream status + latest video ID        │
+│                                                                   │
+│  Ranking: viewCount/playCount desc, most recent pinned to #1     │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                   djurbant-script.js                               │
+│                                                                   │
+│  1. Fetch media-data.json from theme directory                   │
+│  2. For each video: create card with YouTube iframe + overlay    │
+│  3. For each audio: create card with Mixcloud widget or player   │
+│  4. Homepage: show top3 in horizontal carousel                   │
+│  5. Video/Audio pages: show all in grid (chunked 12 at a time)  │
+│  6. Video/Audio toggle switches between grids on homepage        │
+└──────────────────────────────────────────────────────────────────┘</pre>
+            </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>Current Feed Status</h2></div>
+              <?php
+              $media_file = get_stylesheet_directory() . '/media-data.json';
+              $media_data = file_exists($media_file) ? json_decode(file_get_contents($media_file), true) : [];
+              $vid_count = count($media_data['videos']['top3'] ?? []) + count($media_data['videos']['rest'] ?? []);
+              $aud_count = count($media_data['audio']['top3'] ?? []) + count($media_data['audio']['rest'] ?? []);
+              $generated = $media_data['generatedAt'] ?? 'Unknown';
+              $is_live = $media_data['youtubeLive']['isLive'] ?? false;
+              $latest_vid = $media_data['videos']['top3'][0]['title'] ?? '—';
+              $latest_aud = $media_data['audio']['top3'][0]['title'] ?? '—';
+              ?>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem">
+                <div style="padding:0.7rem;border:1px solid var(--admin-border);border-radius:8px">
+                  <p style="margin:0;font-size:0.75rem;color:var(--admin-muted);text-transform:uppercase;letter-spacing:0.05em">Last generated</p>
+                  <p style="margin:0.2rem 0 0;font-size:0.95rem;font-weight:600"><?php echo esc_html($generated); ?></p>
+                </div>
+                <div style="padding:0.7rem;border:1px solid var(--admin-border);border-radius:8px">
+                  <p style="margin:0;font-size:0.75rem;color:var(--admin-muted);text-transform:uppercase;letter-spacing:0.05em">Videos</p>
+                  <p style="margin:0.2rem 0 0;font-size:0.95rem;font-weight:600"><?php echo $vid_count; ?> videos</p>
+                </div>
+                <div style="padding:0.7rem;border:1px solid var(--admin-border);border-radius:8px">
+                  <p style="margin:0;font-size:0.75rem;color:var(--admin-muted);text-transform:uppercase;letter-spacing:0.05em">Audio</p>
+                  <p style="margin:0.2rem 0 0;font-size:0.95rem;font-weight:600"><?php echo $aud_count; ?> mixes</p>
+                </div>
+              </div>
+              <div style="margin-top:0.8rem;display:grid;gap:0.4rem">
+                <p style="margin:0;font-size:0.82rem"><strong>Latest video:</strong> <?php echo esc_html($latest_vid); ?></p>
+                <p style="margin:0;font-size:0.82rem"><strong>Latest audio:</strong> <?php echo esc_html($latest_aud); ?></p>
+                <p style="margin:0;font-size:0.82rem"><strong>YouTube Live:</strong> <?php echo $is_live ? '🔴 LIVE NOW' : '⚫ Offline'; ?></p>
+              </div>
+            </section>
+
+            <section class="admin-card admin-block" style="margin-top:1rem">
+              <div class="admin-block-head"><h2>Update Feed</h2></div>
+              <p style="color:var(--admin-muted);margin:0 0 0.8rem">Edit media-data.json to add, remove, or reorder videos and audio. The auto-refresh pipeline (YouTube API) is planned for a future update.</p>
+              <div class="admin-inline-actions">
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('theme-editor.php?file=media-data.json&theme=djurbant-child'); ?>" target="_blank">Edit media-data.json</a>
+                <a class="admin-btn admin-btn-outline" href="<?php echo admin_url('upload.php'); ?>" target="_blank">Upload audio files</a>
+                <a class="admin-btn admin-btn-outline" href="https://studio.youtube.com" target="_blank" rel="noopener noreferrer">YouTube Studio</a>
+                <a class="admin-btn admin-btn-outline" href="https://www.mixcloud.com/urbant/" target="_blank" rel="noopener noreferrer">Mixcloud Profile</a>
               </div>
             </section>
           </section>
