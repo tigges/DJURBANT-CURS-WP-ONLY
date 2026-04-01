@@ -10,3 +10,28 @@ wp-content/themes/djurbant-child-theme/
 
 # Kadence parent theme (installed at runtime via WP-CLI)
 wp-content/themes/kadence/
+
+# Docker / environment
+.env
+docker/data/
+
+# WordPress uploads & cache (if mounted locally)
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/advanced-cache.php
+wp-content/object-cache.php
+wp-content/wp-cache-config.php
+wp-content/debug.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE / editor
+.vscode/
+.idea/
+*.code-workspace
