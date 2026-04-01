@@ -1,0 +1,30 @@
+/* WordPress-specific overrides for the original djurbant.com styles */
+
+/* Hide WP admin bar spacing when logged in */
+html { margin-top: 0 !important; }
+#wpadminbar { z-index: 99999; }
+
+/* Ensure our header is above WP admin bar */
+.site-header { z-index: 9999; }
+
+/* Hide any Kadence wrappers that leak through */
+.djurbant-home .site-header-wrap,
+.djurbant-video .site-header-wrap,
+.djurbant-audio .site-header-wrap,
+.djurbant-contact .site-header-wrap {
+    display: none !important;
+}
+
+/* Fix body padding when admin bar is visible */
+body.admin-bar {
+    padding-top: calc(var(--header-offset) + 32px);
+}
+body.admin-bar .site-header {
+    top: 32px;
+}
+
+/* Ensure content goes full-width */
+.djurbant-page-wrap {
+    width: 100%;
+    min-height: 100vh;
+}

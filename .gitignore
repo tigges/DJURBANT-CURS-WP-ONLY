@@ -1,0 +1,6 @@
+# WordPress bundled defaults (from Docker volume mount)
+wp-content/plugins/akismet/
+wp-content/plugins/hello.php
+wp-content/plugins/index.php
+wp-content/themes/twentytwenty*/
+wp-content/themes/index.php

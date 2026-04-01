@@ -1,0 +1,71 @@
+<?php
+/**
+ * Template Name: DJ UrbanT Contact
+ *
+ * Renders the original djurbant.com contact page inside WordPress.
+ */
+defined('ABSPATH') || exit;
+$theme_uri = get_stylesheet_directory_uri();
+?>
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <?php wp_head(); ?>
+    <link rel="icon" type="image/x-icon" href="<?php echo $theme_uri; ?>/assets/images/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo $theme_uri; ?>/assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo $theme_uri; ?>/assets/images/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $theme_uri; ?>/assets/images/apple-touch-icon.png" />
+    <style>
+      body[data-page="contact"] .media-section { position: relative; border-top: 1px solid rgba(255,255,255,0.14); border-bottom: 1px solid rgba(255,255,255,0.14); background: #000; padding: clamp(1.5rem,3vw,2.5rem) clamp(1rem,3vw,2.2rem); margin-top: 0; }
+      body[data-page="contact"] .media-section::before { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:var(--rainbow-divider-gradient); pointer-events:none; }
+      body[data-page="contact"] .subpage-main { background: #000; padding-top: 0; }
+      /* Fluent Forms dark theme */
+      .fluentform, .ff-el-group { background: transparent !important; }
+      .ff-el-input--label label, .ff-el-form label { color: rgba(220,226,240,0.85) !important; font-family: "Syne",sans-serif !important; font-weight: 500 !important; }
+      .ff-el-form input[type="text"], .ff-el-form input[type="email"], .ff-el-form input[type="tel"], .ff-el-form input[type="date"], .ff-el-form input[type="url"], .ff-el-form input[type="number"], .ff-el-form textarea, .ff-el-form select { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.18) !important; color: #f1f1f1 !important; border-radius: 8px !important; padding: 0.7rem 0.85rem !important; font-family: "Syne",sans-serif !important; }
+      .ff-el-form input::placeholder, .ff-el-form textarea::placeholder { color: rgba(170,176,190,0.5) !important; }
+      .ff-el-form input:focus, .ff-el-form textarea:focus, .ff-el-form select:focus { border-color: rgba(0,198,255,0.5) !important; outline: none !important; box-shadow: 0 0 0 2px rgba(0,198,255,0.15) !important; }
+      .ff-btn-submit { background: linear-gradient(118deg, #20d5ff, #2f7bff, #7a2cff, #ff2f8a) !important; color: #fff !important; border: none !important; border-radius: 10px !important; padding: 0.8rem 2rem !important; font-family: "Barlow Condensed",sans-serif !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.08em !important; font-size: 1rem !important; cursor: pointer !important; }
+      .ff-message-success { background: rgba(0,198,255,0.1) !important; border: 1px solid rgba(0,198,255,0.3) !important; border-radius: 10px !important; color: #dff7ff !important; }
+      /* WPForms fallback */
+      .wpforms-container { background: transparent !important; }
+      .wpforms-form .wpforms-field-label { color: rgba(220,226,240,0.85) !important; }
+      .wpforms-form input, .wpforms-form textarea, .wpforms-form select { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.18) !important; color: #f1f1f1 !important; border-radius: 8px !important; }
+      .wpforms-form .wpforms-submit-container button { background: linear-gradient(118deg, #20d5ff, #2f7bff, #7a2cff, #ff2f8a) !important; color: #fff !important; border: none !important; border-radius: 10px !important; padding: 0.8rem 2rem !important; font-weight: 700 !important; text-transform: uppercase !important; }
+    </style>
+</head>
+<body data-page="contact" <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+
+    <header class="site-header">
+      <a class="brand" href="<?php echo home_url('/'); ?>" aria-label="DJ UrbanT home">
+        <img class="brand-logo" src="<?php echo $theme_uri; ?>/assets/images/UT_TITLE_SVG.svg" alt="DJ UrbanT" />
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="main-nav-book" href="<?php echo home_url('/'); ?>">Home</a>
+      </nav>
+    </header>
+
+    <main class="subpage-main">
+      <section class="media-section">
+        <div class="section-head">
+          <h1 data-cms-text="page.title">Contact DJ UrbanT</h1>
+        </div>
+        <p class="subpage-intro" data-cms-text="page.introText">Use this form for bookings, event inquiries, collaborations, and press.</p>
+        <p class="subpage-intro">We usually reply within 24 hours.</p>
+
+        <?php echo do_shortcode('[fluentform id="1"]'); ?>
+
+        <div class="section-cta" style="margin-top:1.5rem;">
+          <a class="btn btn-outline" href="<?php echo home_url('/'); ?>" data-cms-text="page.backButtonLabel">Back Home</a>
+        </div>
+      </section>
+    </main>
+
+    <?php get_template_part('footer-djurbant'); ?>
+
+<?php wp_footer(); ?>
+</body>
+</html>
