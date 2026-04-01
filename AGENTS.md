@@ -66,7 +66,7 @@ The manual step-by-step equivalent is in `wp-setup.sh` — the Makefile simply w
 - The Kadence parent theme is **not** bundled in the repo. `wp-setup.sh` installs it automatically on first boot.
 - Docker in this Cloud Agent VM requires `fuse-overlayfs` storage driver and `iptables-legacy` (configured via `/etc/docker/daemon.json` and `update-alternatives`).
 - The `[fluentform id="1"]` shortcode on the Contact page shows as raw text locally since Fluent Forms plugin is not installed. This is expected.
-- PHP changes to the child theme are picked up instantly (OPcache revalidation delay is set to 0 via `docker/opcache-dev.ini`).
+- PHP changes to the child theme are picked up instantly (OPcache revalidation delay is set to 0 via `docker/zzz-opcache-dev.ini`).
 
 ### Current Site Structure (Pages)
 
