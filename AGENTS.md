@@ -46,7 +46,41 @@ curl -s -b /tmp/wp_cookies.txt -H "X-WP-Nonce: ${WP_NONCE}" "https://wordpress-1
 
 ### Local Docker Environment
 
-A `docker-compose.yml` is provided for local development/testing with WordPress + MySQL. See the `docker-compose.yml` file for details. This is secondary to the Cloudways staging site.
+A `docker-compose.yml` is provided for local development/testing with WordPress + MySQL (port 8080). To start the local environment:
+
+```bash
+# Start services (requires Docker)
+sudo docker compose up -d
+
+# Install WordPress (first time only)
+sudo docker exec workspace-wordpress-1 bash -c "curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp"
+sudo docker exec workspace-wordpress-1 wp core install --url="http://localhost:8080" --title="DJ UrbanT" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --allow-root
+
+# Install Kadence parent theme and activate child theme
+sudo docker exec workspace-wordpress-1 wp theme install kadence --allow-root
+sudo docker exec workspace-wordpress-1 wp theme activate djurbant-child-theme --allow-root
+
+# Set pretty permalinks
+sudo docker exec workspace-wordpress-1 wp rewrite structure '/%postname%/' --allow-root
+
+# Create pages with custom templates
+sudo docker exec workspace-wordpress-1 wp option update show_on_front page --allow-root
+sudo docker exec workspace-wordpress-1 wp post create --post_type=page --post_title="DJ UrbanT" --post_name="home" --post_status=publish --page_template="page-templates/home.php" --allow-root
+# Store the returned post ID and set as front page:
+sudo docker exec workspace-wordpress-1 wp option update page_on_front <ID> --allow-root
+sudo docker exec workspace-wordpress-1 wp post create --post_type=page --post_title="Video" --post_name="video" --post_status=publish --page_template="page-templates/video.php" --allow-root
+sudo docker exec workspace-wordpress-1 wp post create --post_type=page --post_title="Audio" --post_name="audio" --post_status=publish --page_template="page-templates/audio.php" --allow-root
+sudo docker exec workspace-wordpress-1 wp post create --post_type=page --post_title="Contact" --post_name="contact" --post_status=publish --page_template="page-templates/contact.php" --allow-root
+```
+
+**Local credentials**: `admin` / `admin`
+
+#### Non-obvious local Docker caveats
+
+- The `djurbant-child-theme/` directory must be copied into `wp-content/themes/` before starting Docker, since the docker-compose volume mounts `./wp-content/themes`. A symlink won't work because paths differ between host and container.
+- The Kadence parent theme is **not** bundled in the repo. It must be installed via `wp theme install kadence` inside the container after first boot.
+- Docker in this Cloud Agent VM requires `fuse-overlayfs` storage driver and `iptables-legacy` (configured via `/etc/docker/daemon.json` and `update-alternatives`).
+- The `[fluentform id="1"]` shortcode on the Contact page shows as raw text locally since Fluent Forms plugin is not installed. This is expected.
 
 ### Current Site Structure (Pages)
 

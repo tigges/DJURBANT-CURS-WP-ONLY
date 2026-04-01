@@ -4,3 +4,9 @@ wp-content/plugins/hello.php
 wp-content/plugins/index.php
 wp-content/themes/twentytwenty*/
 wp-content/themes/index.php
+
+# Child theme copy for Docker (source of truth is /djurbant-child-theme/)
+wp-content/themes/djurbant-child-theme/
+
+# Kadence parent theme (installed at runtime via WP-CLI)
+wp-content/themes/kadence/
