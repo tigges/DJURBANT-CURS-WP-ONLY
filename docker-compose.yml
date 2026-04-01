@@ -38,7 +38,7 @@ services:
       # Mount child theme source-of-truth directly (overlays the themes mount)
       - ./djurbant-child-theme:/var/www/html/wp-content/themes/djurbant-child-theme
       # Disable OPcache revalidation delay for instant PHP hot-reload
-      - ./docker/opcache-dev.ini:/usr/local/etc/php/conf.d/opcache-dev.ini:ro
+      - ./docker/zzz-opcache-dev.ini:/usr/local/etc/php/conf.d/zzz-opcache-dev.ini:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
       interval: 30s
